@@ -1,27 +1,28 @@
-import { Controller, Get, Post, Body, Patch } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AuthServiceService } from './auth-service.service';
 
-@Controller('auth')
+@Controller()
 export class AuthServiceController {
   constructor(private readonly authServiceService: AuthServiceService) {}
 
-  @Get('health')
+  @MessagePattern('auth.health')
   getHello(): string {
     return this.authServiceService.getHello();
   }
 
-  @Post('register')
-  register(@Body() registerDto: any) {
+  @MessagePattern('auth.register')
+  register(@Payload() registerDto: any) {
     return this.authServiceService.register(registerDto);
   }
 
-  @Post('login')
-  login(@Body() loginDto: any) {
+  @MessagePattern('auth.login')
+  login(@Payload() loginDto: any) {
     return this.authServiceService.login(loginDto);
   }
 
-  @Patch('change-password')
-  changePassword(@Body() changePasswordDto: any) {
+  @MessagePattern('auth.change_password')
+  changePassword(@Payload() changePasswordDto: any) {
     return this.authServiceService.changePassword(changePasswordDto);
   }
 }

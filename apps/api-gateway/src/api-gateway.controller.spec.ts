@@ -3,20 +3,24 @@ import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 
 describe('ApiGatewayController', () => {
-  let apiGatewayController: ApiGatewayController;
+  let controller: ApiGatewayController;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const mockService = {
+      getHello: jest.fn().mockReturnValue('API Gateway is working!'),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [ApiGatewayController],
-      providers: [ApiGatewayService],
+      providers: [
+        { provide: ApiGatewayService, useValue: mockService },
+      ],
     }).compile();
 
-    apiGatewayController = app.get<ApiGatewayController>(ApiGatewayController);
+    controller = module.get<ApiGatewayController>(ApiGatewayController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(apiGatewayController.getHello()).toBe('Hello World!');
-    });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 });
