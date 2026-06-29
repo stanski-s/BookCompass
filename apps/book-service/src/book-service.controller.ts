@@ -24,7 +24,12 @@ export class BookServiceController {
   }
 
   @MessagePattern('book.addReview')
-  addReview(@Payload() payload: { bookId: number; createReviewDto: CreateReviewDto }) {
-    return this.bookServiceService.addReview(payload.bookId, payload.createReviewDto);
+  addReview(
+    @Payload() payload: { bookId: number; createReviewDto: CreateReviewDto },
+  ) {
+    return this.bookServiceService.addReview(
+      payload.bookId,
+      payload.createReviewDto,
+    );
   }
 }

@@ -29,14 +29,20 @@ describe('UserServiceController', () => {
   describe('users', () => {
     it('should create a user profile', async () => {
       const result = { id: 'uuid-123', username: 'testuser', bio: 'hello' };
-      jest.spyOn(service, 'create').mockResolvedValue(result as any);
+      jest.spyOn(service, 'create').mockResolvedValue(result);
 
-      expect(await controller.create({ id: 'uuid-123', username: 'testuser', bio: 'hello' })).toBe(result);
+      expect(
+        await controller.create({
+          id: 'uuid-123',
+          username: 'testuser',
+          bio: 'hello',
+        }),
+      ).toBe(result);
     });
 
     it('should find all users', async () => {
       const result = [{ id: 'uuid-123', username: 'testuser', bio: 'hello' }];
-      jest.spyOn(service, 'findAll').mockResolvedValue(result as any);
+      jest.spyOn(service, 'findAll').mockResolvedValue(result);
 
       expect(await controller.findAll()).toBe(result);
     });

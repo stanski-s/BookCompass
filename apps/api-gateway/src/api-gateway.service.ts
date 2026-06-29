@@ -2,6 +2,23 @@ import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 
+export interface RegisterDto {
+  email: string;
+  password: string;
+  username?: string;
+}
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+export interface CreateBookDto {
+  title: string;
+  author: string;
+  publishedYear?: number;
+  category?: string;
+  description?: string;
+}
+
 @Injectable()
 export class ApiGatewayService {
   constructor(
@@ -14,33 +31,59 @@ export class ApiGatewayService {
     return 'API Gateway is working!';
   }
 
-  async register(registerDto: any) {
+  async register(registerDto: RegisterDto) {
     try {
       // 1. Create auth user
-      const authResult = await lastValueFrom(this.authClient.send('auth.register', registerDto));
+      const authResult = await lastValueFrom(
+        this.authClient.send<{
+          id: string;
+          access_token: string;
+          refresh_token: string;
+        }>('auth.register', registerDto),
+      );
       // 2. Create user profile using the returned UUID
       const userResult = await lastValueFrom(
-        this.userClient.send('user.createProfile', {
+        this.userClient.send<{ username: string }>('user.createProfile', {
           id: authResult.id,
           username: registerDto.username || registerDto.email.split('@')[0],
           bio: '',
         }),
       );
-      return { message: 'Registration successful', id: authResult.id, username: userResult.username };
-    } catch (error: any) {
-      throw new HttpException(error.message || 'Registration failed', error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+      return {
+        message: 'Registration successful',
+        id: authResult.id,
+        username: userResult.username,
+        access_token: authResult.access_token,
+        refresh_token: authResult.refresh_token,
+      };
+    } catch (e: unknown) {
+      const error = e as { message?: string; status?: number };
+      throw new HttpException(
+        error.message || 'Registration failed',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  login(loginDto: any) {
-    return this.authClient.send('auth.login', loginDto);
+  login(loginDto: LoginDto) {
+    return this.authClient.send<{
+      access_token: string;
+      refresh_token: string;
+    }>('auth.login', loginDto);
+  }
+
+  refreshTokens(refreshDto: { userId: string; refreshToken: string }) {
+    return this.authClient.send<{
+      access_token: string;
+      refresh_token: string;
+    }>('auth.refresh', refreshDto);
   }
 
   getBooks() {
-    return this.bookClient.send('book.findAll', {});
+    return this.bookClient.send<unknown[]>('book.findAll', {});
   }
 
-  createBook(createBookDto: any) {
-    return this.bookClient.send('book.create', createBookDto);
+  createBook(createBookDto: CreateBookDto) {
+    return this.bookClient.send<unknown>('book.create', createBookDto);
   }
 }

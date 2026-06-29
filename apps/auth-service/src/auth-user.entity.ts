@@ -18,4 +18,7 @@ export class AuthUser {
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role!: Role;
+
+  @Column({ nullable: true })
+  refresh_token_hash!: string;
 }

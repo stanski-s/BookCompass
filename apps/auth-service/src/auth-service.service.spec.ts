@@ -6,7 +6,7 @@ import { AuthUser } from './auth-user.entity';
 
 describe('AuthServiceService', () => {
   let service: AuthServiceService;
-  
+
   const mockJwtService = {
     sign: jest.fn().mockReturnValue('mock-jwt-token'),
   };
@@ -14,7 +14,9 @@ describe('AuthServiceService', () => {
   const mockAuthUserRepository = {
     findOne: jest.fn(),
     create: jest.fn().mockImplementation((dto) => dto),
-    save: jest.fn().mockImplementation((user) => Promise.resolve({ id: '1', ...user })),
+    save: jest
+      .fn()
+      .mockImplementation((user) => Promise.resolve({ id: '1', ...user })),
   };
 
   beforeEach(async () => {
@@ -22,7 +24,10 @@ describe('AuthServiceService', () => {
       providers: [
         AuthServiceService,
         { provide: JwtService, useValue: mockJwtService },
-        { provide: getRepositoryToken(AuthUser), useValue: mockAuthUserRepository },
+        {
+          provide: getRepositoryToken(AuthUser),
+          useValue: mockAuthUserRepository,
+        },
       ],
     }).compile();
 

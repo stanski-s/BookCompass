@@ -12,9 +12,7 @@ describe('ApiGatewayController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ApiGatewayController],
-      providers: [
-        { provide: ApiGatewayService, useValue: mockService },
-      ],
+      providers: [{ provide: ApiGatewayService, useValue: mockService }],
     }).compile();
 
     controller = module.get<ApiGatewayController>(ApiGatewayController);

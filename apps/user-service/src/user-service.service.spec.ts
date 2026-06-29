@@ -9,7 +9,11 @@ describe('UserServiceService', () => {
   const mockUserRepository = {
     create: jest.fn().mockImplementation((dto) => dto),
     save: jest.fn().mockImplementation((user) => Promise.resolve({ ...user })),
-    find: jest.fn().mockResolvedValue([{ id: 'uuid-123', username: 'testuser', bio: 'hello' } as User]),
+    find: jest
+      .fn()
+      .mockResolvedValue([
+        { id: 'uuid-123', username: 'testuser', bio: 'hello' },
+      ]),
   };
 
   beforeEach(async () => {
@@ -19,7 +23,7 @@ describe('UserServiceService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
-        }
+        },
       ],
     }).compile();
 

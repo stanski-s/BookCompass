@@ -1,6 +1,23 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { ApiGatewayService } from './api-gateway.service';
 
+export interface RegisterDto {
+  email: string;
+  password: string;
+  username?: string;
+}
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+export interface CreateBookDto {
+  title: string;
+  author: string;
+  publishedYear?: number;
+  category?: string;
+  description?: string;
+}
+
 @Controller()
 export class ApiGatewayController {
   constructor(private readonly apiGatewayService: ApiGatewayService) {}
@@ -11,13 +28,18 @@ export class ApiGatewayController {
   }
 
   @Post('auth/register')
-  register(@Body() registerDto: any) {
+  register(@Body() registerDto: RegisterDto) {
     return this.apiGatewayService.register(registerDto);
   }
 
   @Post('auth/login')
-  login(@Body() loginDto: any) {
+  login(@Body() loginDto: LoginDto) {
     return this.apiGatewayService.login(loginDto);
+  }
+
+  @Post('auth/refresh')
+  refreshTokens(@Body() refreshDto: { userId: string; refreshToken: string }) {
+    return this.apiGatewayService.refreshTokens(refreshDto);
   }
 
   @Get('books')
@@ -26,7 +48,7 @@ export class ApiGatewayController {
   }
 
   @Post('books')
-  createBook(@Body() createBookDto: any) {
+  createBook(@Body() createBookDto: CreateBookDto) {
     return this.apiGatewayService.createBook(createBookDto);
   }
 }
