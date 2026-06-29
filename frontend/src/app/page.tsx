@@ -1,76 +1,24 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
+import NavBar from "@/components/NavBar";
 
-export default function Home() {
-  const [scrolled, setScrolled] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+async function getBooks() {
+  try {
+    const res = await fetch("http://localhost:8080/api/books", { cache: "no-store" });
+    if (!res.ok) return [];
+    return res.json();
+  } catch (error) {
+    console.error("Failed to fetch books:", error);
+    return [];
+  }
+}
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const addToCart = () => {
-    setCartCount((c) => c + 1);
-  };
+export default async function Home() {
+  const books = await getBooks();
 
   return (
     <div className="min-h-screen">
-      {/* TopNavBar */}
-      <header
-        className={`fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md transition-all duration-300 ${
-          scrolled ? "py-sm shadow-md" : "py-md shadow-sm"
-        }`}
-      >
-        <nav className="max-w-container-max mx-auto px-lg md:px-xl flex justify-between items-center">
-          <div className="flex items-center gap-sm">
-            <span className="material-symbols-outlined text-primary text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-              explore
-            </span>
-            <span className="font-headline-sm text-headline-sm text-primary tracking-tight">BookCompass</span>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-lg">
-            <a className="font-body-md text-primary border-b-2 border-primary pb-1" href="#">Browse</a>
-            <a className="font-body-md text-secondary hover:text-primary transition-colors" href="#">New Arrivals</a>
-            <a className="font-body-md text-secondary hover:text-primary transition-colors" href="#">Best Sellers</a>
-          </div>
-
-          <div className="hidden md:flex flex-1 max-w-sm mx-lg relative group">
-            <input
-              className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-xl py-xs focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm"
-              placeholder="Search titles, authors..."
-              type="text"
-            />
-            <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">
-              search
-            </span>
-          </div>
-
-          <div className="flex items-center gap-md">
-            <button className="relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
-              <span className="material-symbols-outlined text-on-surface">shopping_cart</span>
-              <span
-                className={`absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-surface transition-transform duration-300 ${
-                  cartCount > 0 ? "scale-100" : "scale-0"
-                }`}
-              >
-                {cartCount}
-              </span>
-            </button>
-            <button className="p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
-              <span className="material-symbols-outlined text-on-surface">account_circle</span>
-            </button>
-            <button className="md:hidden p-sm">
-              <span className="material-symbols-outlined">menu</span>
-            </button>
-          </div>
-        </nav>
-      </header>
+      <NavBar />
 
       <main className="pt-[80px]">
         {/* Hero Section */}
@@ -119,32 +67,36 @@ export default function Home() {
         {/* Book Grid */}
         <section className="max-w-container-max mx-auto px-lg md:px-xl mb-xxl">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-lg">
-            {[1, 2, 3, 4].map((book) => (
-              <div key={book} className="group">
-                <div className="aspect-[2/3] w-full rounded-lg overflow-hidden bg-surface-container-high book-card-shadow transition-all duration-300 relative flex items-center justify-center">
-                  <span className="text-secondary">Book Cover</span>
-                  <div className="absolute top-sm right-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="bg-white/90 backdrop-blur p-xs rounded-full shadow-md text-primary">
-                      <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>favorite</span>
-                    </button>
+            {books.length > 0 ? (
+              books.map((book: any) => (
+                <div key={book.id} className="group">
+                  <div className="aspect-[2/3] w-full rounded-lg overflow-hidden bg-surface-container-high book-card-shadow transition-all duration-300 relative flex items-center justify-center">
+                    <span className="text-secondary">Book Cover</span>
+                    <div className="absolute top-sm right-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="bg-white/90 backdrop-blur p-xs rounded-full shadow-md text-primary">
+                        <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>favorite</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-md space-y-xs">
+                    <div className="flex items-center gap-xs text-primary mb-xs">
+                      <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      <span className="font-label-sm">4.9</span>
+                    </div>
+                    <h3 className="font-headline-sm text-primary line-clamp-2 leading-tight">{book.title}</h3>
+                    <p className="font-body-sm text-secondary">{book.author}</p>
+                    <div className="flex items-center justify-between pt-sm">
+                      <span className="font-label-md text-primary">$28.00</span>
+                      <button className="add-to-cart-btn p-xs bg-primary-container text-white rounded transition-colors hover:bg-primary active:scale-90">
+                        <span className="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div className="mt-md space-y-xs">
-                  <div className="flex items-center gap-xs text-primary mb-xs">
-                    <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    <span className="font-label-sm">4.9</span>
-                  </div>
-                  <h3 className="font-headline-sm text-primary line-clamp-2 leading-tight">The Emerald Path</h3>
-                  <p className="font-body-sm text-secondary">Evelyn Thorne</p>
-                  <div className="flex items-center justify-between pt-sm">
-                    <span className="font-label-md text-primary">$28.00</span>
-                    <button onClick={addToCart} className="add-to-cart-btn p-xs bg-primary-container text-white rounded transition-colors hover:bg-primary active:scale-90">
-                      <span className="material-symbols-outlined">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-secondary col-span-full">No books found in the catalog.</p>
+            )}
           </div>
         </section>
       </main>
