@@ -28,6 +28,8 @@
       "@app/contracts/*": [
         "libs/contracts/src/*"
       ]
-    }
+    },
+    "types": ["node", "jest"],
+    "ignoreDeprecations": "6.0"
   }
 }
