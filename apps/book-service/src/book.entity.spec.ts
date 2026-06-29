@@ -6,20 +6,20 @@ describe('Book Domain', () => {
     const book = new Book();
     book.id = 1;
     book.title = 'Test Title';
-    book.category = 'Fantasy';
-    book.description = 'A great book';
+    book.categories = ['Fantasy'];
+    book.description = 'Test Description';
     expect(book.title).toBe('Test Title');
-    expect(book.category).toBe('Fantasy');
-    expect(book.description).toBe('A great book');
+    expect(book.categories).toEqual(['Fantasy']);
+    expect(book.description).toBe('Test Description');
   });
 
   it('should create a DTO', () => {
     const dto = new CreateBookDto();
     dto.title = 'Test Title';
-    dto.category = 'Fantasy';
-    dto.description = 'A great book';
+    dto.categories = ['Fantasy'];
+    dto.description = 'Test Description';
     expect(dto.title).toBe('Test Title');
-    expect(dto.category).toBe('Fantasy');
-    expect(dto.description).toBe('A great book');
+    expect(dto.categories).toEqual(['Fantasy']);
+    expect(dto.description).toBe('Test Description');
   });
 });

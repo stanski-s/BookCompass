@@ -61,7 +61,7 @@ describe('BookServiceService', () => {
       title: 'Test',
       author: 'Author',
       price: 10,
-      category: 'Fantasy',
+      categories: ['Fantasy'],
       description: 'Desc',
     });
     expect(result).toEqual({
@@ -69,7 +69,7 @@ describe('BookServiceService', () => {
       title: 'Test',
       author: 'Author',
       price: 10,
-      category: 'Fantasy',
+      categories: ['Fantasy'],
       description: 'Desc',
     });
     expect(mockRmqClient.emit).toHaveBeenCalledWith('book_created', result);

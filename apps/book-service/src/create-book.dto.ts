@@ -2,6 +2,7 @@ export class CreateBookDto {
   title!: string;
   author!: string;
   price!: number;
-  category!: string;
+  categories!: string[];
   description!: string;
+  coverUrl?: string;
 }

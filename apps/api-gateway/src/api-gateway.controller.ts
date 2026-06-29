@@ -12,10 +12,11 @@ export interface LoginDto {
 }
 export interface CreateBookDto {
   title: string;
-  author: string;
-  publishedYear?: number;
-  category?: string;
+  author?: string;
+  price?: number;
+  categories?: string[];
   description?: string;
+  coverUrl?: string;
 }
 
 @Controller()

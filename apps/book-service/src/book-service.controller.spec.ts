@@ -46,7 +46,7 @@ describe('BookServiceController', () => {
         title: 'Test',
         author: 'Author',
         price: 10,
-        category: 'Fantasy',
+        categories: ['Fantasy'],
         description: 'Desc',
       };
       jest.spyOn(bookServiceService, 'create').mockResolvedValue(result);
@@ -55,7 +55,7 @@ describe('BookServiceController', () => {
           title: 'Test',
           author: 'Author',
           price: 10,
-          category: 'Fantasy',
+          categories: ['Fantasy'],
           description: 'Desc',
         }),
       ).toBe(result);
@@ -68,7 +68,7 @@ describe('BookServiceController', () => {
           title: 'Test',
           author: 'Author',
           price: 10,
-          category: 'Fantasy',
+          categories: ['Fantasy'],
           description: 'Desc',
           reviews: [],
         },

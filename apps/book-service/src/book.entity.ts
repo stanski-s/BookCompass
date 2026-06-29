@@ -15,8 +15,11 @@ export class Book {
   @Column('decimal')
   price!: number;
 
-  @Column()
-  category!: string;
+  @Column('text', { array: true, default: '{}' })
+  categories!: string[];
+
+  @Column({ nullable: true })
+  coverUrl!: string;
 
   @Column({ type: 'text' })
   description!: string;
