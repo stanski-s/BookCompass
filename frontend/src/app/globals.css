@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* Ukrywanie scrollbara dla poziomych list (z ui.jsx) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .book-card-shadow {
+    box-shadow: 0 4px 20px -4px rgba(27, 67, 50, 0.08);
+  }
+  .book-card-shadow:hover {
+    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.12);
+  }
+}
