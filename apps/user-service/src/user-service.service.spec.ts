@@ -9,8 +9,17 @@ describe('UserServiceService', () => {
 
   const mockUserRepository = {
     create: jest.fn().mockImplementation((dto) => dto),
-    save: jest.fn().mockImplementation((user) => Promise.resolve({ id: 1, ...user })),
-    find: jest.fn().mockResolvedValue([{ id: 1, email: 'test@test.com', username: 'testuser', passwordHash: 'hash' } as User]),
+    save: jest
+      .fn()
+      .mockImplementation((user) => Promise.resolve({ id: 1, ...user })),
+    find: jest.fn().mockResolvedValue([
+      {
+        id: 1,
+        email: 'test@test.com',
+        username: 'testuser',
+        passwordHash: 'hash',
+      },
+    ]),
   };
 
   beforeEach(async () => {
@@ -20,7 +29,7 @@ describe('UserServiceService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
-        }
+        },
       ],
     }).compile();
 
@@ -32,7 +41,11 @@ describe('UserServiceService', () => {
   });
 
   it('should create a user with hashed password', async () => {
-    const dto = { email: 'test@test.com', password: 'pass', username: 'testuser' };
+    const dto = {
+      email: 'test@test.com',
+      password: 'pass',
+      username: 'testuser',
+    };
     const result = await service.create(dto);
     expect(result.id).toBe(1);
     expect(result.email).toBe('test@test.com');

@@ -21,6 +21,6 @@ export class Book {
   @Column({ type: 'text' })
   description!: string;
 
-  @OneToMany(() => Review, review => review.book)
+  @OneToMany(() => Review, (review) => review.book)
   reviews!: Review[];
 }

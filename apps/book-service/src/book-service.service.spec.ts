@@ -22,7 +22,11 @@ describe('BookServiceService', () => {
 
   const mockReviewRepository = {
     create: jest.fn().mockImplementation((dto) => dto),
-    save: jest.fn().mockImplementation((review) => Promise.resolve({ id: 1, ...review, book: { id: review.bookId } })),
+    save: jest
+      .fn()
+      .mockImplementation((review) =>
+        Promise.resolve({ id: 1, ...review, book: { id: review.bookId } }),
+      ),
   };
 
   beforeEach(async () => {
@@ -54,12 +58,12 @@ describe('BookServiceService', () => {
 
   it('should create a new book and emit event', async () => {
     const result = await service.create({
-        title: 'Test',
-        author: 'Author',
-        price: 10,
-        category: 'Fantasy',
-        description: 'Desc',
-      });
+      title: 'Test',
+      author: 'Author',
+      price: 10,
+      category: 'Fantasy',
+      description: 'Desc',
+    });
     expect(result).toEqual({
       id: 1,
       title: 'Test',
@@ -78,7 +82,11 @@ describe('BookServiceService', () => {
   });
 
   it('should add a review to a book and emit event', async () => {
-    const result = await service.addReview(1, { rating: 5, content: 'Great!', bookId: 1 });
+    const result = await service.addReview(1, {
+      rating: 5,
+      content: 'Great!',
+      bookId: 1,
+    });
     expect(result).toEqual({
       id: 1,
       rating: 5,

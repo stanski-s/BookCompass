@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserServiceController } from './user-service.controller';
 import { UserServiceService } from './user-service.service';
-import { User } from './user.entity';
 
 describe('UserServiceController', () => {
   let controller: UserServiceController;
@@ -29,14 +28,32 @@ describe('UserServiceController', () => {
 
   describe('users', () => {
     it('should create a user', async () => {
-      const result = { id: 1, email: 'test@test.com', username: 'testuser', passwordHash: 'hash' } as User;
+      const result = {
+        id: 1,
+        email: 'test@test.com',
+        username: 'testuser',
+        passwordHash: 'hash',
+      };
       jest.spyOn(service, 'create').mockResolvedValue(result);
 
-      expect(await controller.create({ email: 'test@test.com', username: 'testuser', password: 'pass' })).toBe(result);
+      expect(
+        await controller.create({
+          email: 'test@test.com',
+          username: 'testuser',
+          password: 'pass',
+        }),
+      ).toBe(result);
     });
 
     it('should find all users', async () => {
-      const result = [{ id: 1, email: 'test@test.com', username: 'testuser', passwordHash: 'hash' } as User];
+      const result = [
+        {
+          id: 1,
+          email: 'test@test.com',
+          username: 'testuser',
+          passwordHash: 'hash',
+        },
+      ];
       jest.spyOn(service, 'findAll').mockResolvedValue(result);
 
       expect(await controller.findAll()).toBe(result);
