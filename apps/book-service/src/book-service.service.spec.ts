@@ -6,6 +6,9 @@ import { Review } from './review.entity';
 
 describe('BookServiceService', () => {
   let service: BookServiceService;
+  const mockRmqClient = {
+    emit: jest.fn(),
+  };
 
   const mockRepository = {
     create: jest.fn().mockImplementation((dto: Partial<Book>) => dto as Book),
@@ -34,26 +37,30 @@ describe('BookServiceService', () => {
           provide: getRepositoryToken(Review),
           useValue: mockReviewRepository,
         },
+        {
+          provide: 'RMQ_CLIENT',
+          useValue: mockRmqClient,
+        },
       ],
     }).compile();
 
     service = module.get<BookServiceService>(BookServiceService);
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('should create a new book', async () => {
-    expect(
-      await service.create({
+  it('should create a new book and emit event', async () => {
+    const result = await service.create({
         title: 'Test',
         author: 'Author',
         price: 10,
         category: 'Fantasy',
         description: 'Desc',
-      }),
-    ).toEqual({
+      });
+    expect(result).toEqual({
       id: 1,
       title: 'Test',
       author: 'Author',
@@ -61,6 +68,7 @@ describe('BookServiceService', () => {
       category: 'Fantasy',
       description: 'Desc',
     });
+    expect(mockRmqClient.emit).toHaveBeenCalledWith('book_created', result);
   });
 
   it('should return all books', async () => {
@@ -69,13 +77,15 @@ describe('BookServiceService', () => {
     ]);
   });
 
-  it('should add a review to a book', async () => {
-    expect(await service.addReview(1, { rating: 5, content: 'Great!', bookId: 1 })).toEqual({
+  it('should add a review to a book and emit event', async () => {
+    const result = await service.addReview(1, { rating: 5, content: 'Great!', bookId: 1 });
+    expect(result).toEqual({
       id: 1,
       rating: 5,
       content: 'Great!',
       bookId: 1,
       book: { id: 1 },
     });
+    expect(mockRmqClient.emit).toHaveBeenCalledWith('review_added', result);
   });
 });
