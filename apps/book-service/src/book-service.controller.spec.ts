@@ -12,6 +12,7 @@ describe('BookServiceController', () => {
       getHealth: jest.fn().mockReturnValue('book-service is healthy!'),
       create: jest.fn(),
       findAll: jest.fn(),
+      addReview: jest.fn(),
     };
 
     const app: TestingModule = await Test.createTestingModule({
@@ -45,6 +46,8 @@ describe('BookServiceController', () => {
         title: 'Test',
         author: 'Author',
         price: 10,
+        category: 'Fantasy',
+        description: 'Desc',
       };
       jest.spyOn(bookServiceService, 'create').mockResolvedValue(result);
       expect(
@@ -52,16 +55,26 @@ describe('BookServiceController', () => {
           title: 'Test',
           author: 'Author',
           price: 10,
+          category: 'Fantasy',
+          description: 'Desc',
         }),
       ).toBe(result);
     });
 
     it('should get all books', async () => {
-      const result: Book[] = [
-        { id: 1, title: 'Test', author: 'Author', price: 10 },
-      ];
-      jest.spyOn(bookServiceService, 'findAll').mockResolvedValue(result);
+      const result: Book[] = [{ id: 1, title: 'Test', author: 'Author', price: 10, category: 'Fantasy', description: 'Desc', reviews: [] }];
+      jest
+        .spyOn(bookServiceService, 'findAll')
+        .mockResolvedValue(result);
       expect(await bookServiceController.findAll()).toBe(result);
+    });
+
+    it('should add a review to a book', async () => {
+      const result: any = { id: 1, rating: 5, content: 'Great!', book: { id: 1 } };
+      jest.spyOn(bookServiceService, 'addReview').mockResolvedValue(result);
+      expect(
+        await bookServiceController.addReview(1, { rating: 5, content: 'Great!', bookId: 1 })
+      ).toBe(result);
     });
   });
 });
