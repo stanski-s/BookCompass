@@ -17,7 +17,13 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/temp-workspace/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/temp-workspace/test/jest-e2e.json",
+    "start:infra": "docker-compose up -d",
+    "start:api": "nest start api-gateway --watch",
+    "start:auth": "nest start auth-service --watch",
+    "start:user": "nest start user-service --watch",
+    "start:book": "nest start book-service --watch",
+    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow\" -n \"GATEWAY,AUTH,USER,BOOK\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\""
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -50,6 +56,7 @@
     "@types/node": "^24.0.0",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^7.0.0",
+    "concurrently": "^10.0.3",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
