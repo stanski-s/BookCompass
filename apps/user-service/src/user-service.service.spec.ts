@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import { UserServiceService } from './user-service.service';
 import { User } from './user.entity';
 
@@ -9,17 +8,8 @@ describe('UserServiceService', () => {
 
   const mockUserRepository = {
     create: jest.fn().mockImplementation((dto) => dto),
-    save: jest
-      .fn()
-      .mockImplementation((user) => Promise.resolve({ id: 1, ...user })),
-    find: jest.fn().mockResolvedValue([
-      {
-        id: 1,
-        email: 'test@test.com',
-        username: 'testuser',
-        passwordHash: 'hash',
-      },
-    ]),
+    save: jest.fn().mockImplementation((user) => Promise.resolve({ ...user })),
+    find: jest.fn().mockResolvedValue([{ id: 'uuid-123', username: 'testuser', bio: 'hello' } as User]),
   };
 
   beforeEach(async () => {
@@ -29,7 +19,7 @@ describe('UserServiceService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
-        },
+        }
       ],
     }).compile();
 
@@ -40,23 +30,17 @@ describe('UserServiceService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should create a user with hashed password', async () => {
-    const dto = {
-      email: 'test@test.com',
-      password: 'pass',
-      username: 'testuser',
-    };
+  it('should create a user profile', async () => {
+    const dto = { id: 'uuid-123', username: 'testuser', bio: 'hello' };
     const result = await service.create(dto);
-    expect(result.id).toBe(1);
-    expect(result.email).toBe('test@test.com');
+    expect(result.id).toBe('uuid-123');
     expect(result.username).toBe('testuser');
-    expect(result.passwordHash).not.toBe('pass');
-    expect(await bcrypt.compare('pass', result.passwordHash)).toBeTruthy();
+    expect(result.bio).toBe('hello');
   });
 
   it('should find all users', async () => {
     const result = await service.findAll();
     expect(result.length).toBe(1);
-    expect(result[0].email).toBe('test@test.com');
+    expect(result[0].username).toBe('testuser');
   });
 });

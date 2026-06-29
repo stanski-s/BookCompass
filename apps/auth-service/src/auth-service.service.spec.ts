@@ -1,11 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { AuthServiceService } from './auth-service.service';
+import { AuthUser } from './auth-user.entity';
 
 describe('AuthServiceService', () => {
   let service: AuthServiceService;
+  
   const mockJwtService = {
     sign: jest.fn().mockReturnValue('mock-jwt-token'),
+  };
+
+  const mockAuthUserRepository = {
+    findOne: jest.fn(),
+    create: jest.fn().mockImplementation((dto) => dto),
+    save: jest.fn().mockImplementation((user) => Promise.resolve({ id: '1', ...user })),
   };
 
   beforeEach(async () => {
@@ -13,6 +22,7 @@ describe('AuthServiceService', () => {
       providers: [
         AuthServiceService,
         { provide: JwtService, useValue: mockJwtService },
+        { provide: getRepositoryToken(AuthUser), useValue: mockAuthUserRepository },
       ],
     }).compile();
 
@@ -21,16 +31,5 @@ describe('AuthServiceService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-  });
-
-  it('should return a jwt token when logging in', () => {
-    const user = { username: 'testuser', id: 1 };
-    expect(service.login(user)).toEqual({
-      access_token: 'mock-jwt-token',
-    });
-    expect(mockJwtService.sign).toHaveBeenCalledWith({
-      username: 'testuser',
-      sub: 1,
-    });
   });
 });

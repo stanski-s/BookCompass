@@ -27,34 +27,16 @@ describe('UserServiceController', () => {
   });
 
   describe('users', () => {
-    it('should create a user', async () => {
-      const result = {
-        id: 1,
-        email: 'test@test.com',
-        username: 'testuser',
-        passwordHash: 'hash',
-      };
-      jest.spyOn(service, 'create').mockResolvedValue(result);
+    it('should create a user profile', async () => {
+      const result = { id: 'uuid-123', username: 'testuser', bio: 'hello' };
+      jest.spyOn(service, 'create').mockResolvedValue(result as any);
 
-      expect(
-        await controller.create({
-          email: 'test@test.com',
-          username: 'testuser',
-          password: 'pass',
-        }),
-      ).toBe(result);
+      expect(await controller.create({ id: 'uuid-123', username: 'testuser', bio: 'hello' })).toBe(result);
     });
 
     it('should find all users', async () => {
-      const result = [
-        {
-          id: 1,
-          email: 'test@test.com',
-          username: 'testuser',
-          passwordHash: 'hash',
-        },
-      ];
-      jest.spyOn(service, 'findAll').mockResolvedValue(result);
+      const result = [{ id: 'uuid-123', username: 'testuser', bio: 'hello' }];
+      jest.spyOn(service, 'findAll').mockResolvedValue(result as any);
 
       expect(await controller.findAll()).toBe(result);
     });

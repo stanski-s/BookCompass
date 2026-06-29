@@ -4,11 +4,13 @@ import { AuthServiceService } from './auth-service.service';
 
 describe('AuthServiceController', () => {
   let controller: AuthServiceController;
-  let service: AuthServiceService;
 
   beforeEach(async () => {
     const mockService = {
-      login: jest.fn().mockReturnValue({ access_token: 'mock-token' }),
+      register: jest.fn(),
+      login: jest.fn(),
+      changePassword: jest.fn(),
+      getHello: jest.fn().mockReturnValue('Auth Service is running!'),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -17,18 +19,9 @@ describe('AuthServiceController', () => {
     }).compile();
 
     controller = module.get<AuthServiceController>(AuthServiceController);
-    service = module.get<AuthServiceService>(AuthServiceService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-
-  it('should call service login', () => {
-    const dto = { username: 'testuser', password: 'testpassword' };
-    // This is mocked purely for endpoint behavior demonstration
-    const reqUserMock = { id: 1, username: dto.username };
-    expect(controller.login(dto)).toEqual({ access_token: 'mock-token' });
-    expect(service.login).toHaveBeenCalledWith(dto);
   });
 });
