@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import NavBar from "@/components/NavBar";
+import BookGallery from "@/components/BookGallery";
 
 async function getBooks() {
   try {
@@ -51,58 +52,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Category Filter */}
-        <section className="max-w-container-max mx-auto px-lg md:px-xl py-xl overflow-hidden">
-          <div className="flex items-center justify-between mb-lg">
-            <h2 className="font-headline-sm text-headline-sm text-primary">Explore Genres</h2>
-            <a className="font-label-md text-primary hover:underline decoration-primary/30" href="#">View All</a>
-          </div>
-          <div className="flex gap-sm overflow-x-auto pb-md scrollbar-hide no-scrollbar">
-            <button className="px-lg py-sm rounded-full bg-primary text-white font-label-sm whitespace-nowrap transition-all shadow-md active:scale-95">All Collections</button>
-            <button className="px-lg py-sm rounded-full bg-surface-container-high text-on-surface font-label-sm whitespace-nowrap hover:bg-primary-fixed transition-all active:scale-95">Fiction</button>
-            <button className="px-lg py-sm rounded-full bg-surface-container-high text-on-surface font-label-sm whitespace-nowrap hover:bg-primary-fixed transition-all active:scale-95">Non-Fiction</button>
-          </div>
-        </section>
-
-        {/* Book Grid */}
-        <section className="max-w-container-max mx-auto px-lg md:px-xl mb-xxl">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-lg">
-            {books.length > 0 ? (
-              books.map((book: any) => (
-                <div key={book.id} className="group">
-                  <div className="aspect-[2/3] w-full rounded-lg overflow-hidden bg-surface-container-high book-card-shadow transition-all duration-300 relative flex items-center justify-center">
-                    {book.coverUrl ? (
-                      <img src={book.coverUrl} alt={book.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <span className="text-secondary">Book Cover</span>
-                    )}
-                    <div className="absolute top-sm right-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="bg-white/90 backdrop-blur p-xs rounded-full shadow-md text-primary">
-                        <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>favorite</span>
-                      </button>
-                    </div>
-                  </div>
-                  <div className="mt-md space-y-xs">
-                    <div className="flex items-center gap-xs text-primary mb-xs">
-                      <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                      <span className="font-label-sm">4.9</span>
-                    </div>
-                    <h3 className="font-headline-sm text-primary line-clamp-2 leading-tight">{book.title}</h3>
-                    <p className="font-body-sm text-secondary">{book.author}</p>
-                    <div className="flex items-center justify-between pt-sm">
-                      <span className="font-label-md text-primary">${Number(book.price || 0).toFixed(2)}</span>
-                      <button className="add-to-cart-btn p-xs bg-primary-container text-white rounded transition-colors hover:bg-primary active:scale-90">
-                        <span className="material-symbols-outlined">add_shopping_cart</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-secondary col-span-full">No books found in the catalog.</p>
-            )}
-          </div>
-        </section>
+        <BookGallery books={books} />
       </main>
 
       <footer className="w-full bg-surface-container-high border-t border-outline-variant mt-xxl">
