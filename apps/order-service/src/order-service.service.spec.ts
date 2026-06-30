@@ -8,10 +8,14 @@ import { of } from 'rxjs';
 
 describe('OrderServiceService', () => {
   let service: OrderServiceService;
-  let mockOrderRepository: any;
-  let mockOrderItemRepository: any;
-  let mockUserClient: any;
-  let mockBookClient: any;
+  let mockOrderRepository: {
+    create: jest.Mock;
+    save: jest.Mock;
+    find: jest.Mock;
+  };
+  let mockOrderItemRepository: { create: jest.Mock; save: jest.Mock };
+  let mockUserClient: { send: jest.Mock; emit: jest.Mock };
+  let mockBookClient: { send: jest.Mock };
 
   beforeEach(async () => {
     mockOrderRepository = {
@@ -87,7 +91,7 @@ describe('OrderServiceService', () => {
         totalAmount: 20.0,
         status: OrderStatus.COMPLETED,
       };
-      
+
       const savedOrder = { id: 'order-1', ...mockOrder };
       mockOrderRepository.create.mockReturnValue(mockOrder);
       mockOrderRepository.save.mockResolvedValue(savedOrder);
@@ -99,7 +103,10 @@ describe('OrderServiceService', () => {
 
       expect(result).toHaveProperty('id', 'order-1');
       expect(result.totalAmount).toBe(20.0);
-      expect(mockUserClient.emit).toHaveBeenCalledWith('user.clearCart', 'uuid-1');
+      expect(mockUserClient.emit).toHaveBeenCalledWith(
+        'user.clearCart',
+        'uuid-1',
+      );
     });
 
     it('should throw an error if a book is not found', async () => {

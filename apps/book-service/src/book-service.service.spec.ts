@@ -5,7 +5,12 @@ import { Book } from './book.entity';
 
 describe('BookServiceService', () => {
   let service: BookServiceService;
-  let mockBookRepository: any;
+  let mockBookRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+    create: jest.Mock;
+    save: jest.Mock;
+  };
 
   beforeEach(async () => {
     mockBookRepository = {
@@ -42,12 +47,18 @@ describe('BookServiceService', () => {
 
   describe('getBestsellers', () => {
     it('should return a limited number of books', async () => {
-      const mockBooks = [{ id: 1, title: 'Book 1' }, { id: 2, title: 'Book 2' }];
+      const mockBooks = [
+        { id: 1, title: 'Book 1' },
+        { id: 2, title: 'Book 2' },
+      ];
       mockBookRepository.find.mockResolvedValue(mockBooks);
 
       const result = await service.getBestsellers();
       expect(result).toEqual(mockBooks);
-      expect(mockBookRepository.find).toHaveBeenCalledWith({ take: 4, order: { id: 'ASC' } });
+      expect(mockBookRepository.find).toHaveBeenCalledWith({
+        take: 4,
+        order: { id: 'ASC' },
+      });
     });
   });
 
@@ -58,7 +69,9 @@ describe('BookServiceService', () => {
 
       const result = await service.findById(1);
       expect(result).toEqual(mockBook);
-      expect(mockBookRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(mockBookRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 1 },
+      });
     });
   });
 });

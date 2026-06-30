@@ -6,8 +6,18 @@ import { CartItem } from './cart-item.entity';
 
 describe('UserServiceService', () => {
   let service: UserServiceService;
-  let mockUserRepository: any;
-  let mockCartItemRepository: any;
+  let mockUserRepository: {
+    create: jest.Mock;
+    save: jest.Mock;
+    find: jest.Mock;
+  };
+  let mockCartItemRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+    create: jest.Mock;
+    save: jest.Mock;
+    delete: jest.Mock;
+  };
 
   beforeEach(async () => {
     mockUserRepository = {
@@ -56,7 +66,9 @@ describe('UserServiceService', () => {
 
       const result = await service.getCart('uuid-1');
       expect(result).toEqual(mockCart);
-      expect(mockCartItemRepository.find).toHaveBeenCalledWith({ where: { user: { id: 'uuid-1' } } });
+      expect(mockCartItemRepository.find).toHaveBeenCalledWith({
+        where: { user: { id: 'uuid-1' } },
+      });
     });
   });
 
@@ -69,13 +81,25 @@ describe('UserServiceService', () => {
 
       const result = await service.addToCart('uuid-1', 1, 2);
       expect(result).toHaveProperty('id', 1);
-      expect(mockCartItemRepository.create).toHaveBeenCalledWith({ user: { id: 'uuid-1' }, bookId: 1, quantity: 2 });
+      expect(mockCartItemRepository.create).toHaveBeenCalledWith({
+        user: { id: 'uuid-1' },
+        bookId: 1,
+        quantity: 2,
+      });
     });
 
     it('should increment quantity if book already in cart', async () => {
-      const existingItem = { id: 1, user: { id: 'uuid-1' }, bookId: 1, quantity: 2 };
+      const existingItem = {
+        id: 1,
+        user: { id: 'uuid-1' },
+        bookId: 1,
+        quantity: 2,
+      };
       mockCartItemRepository.findOne.mockResolvedValue(existingItem);
-      mockCartItemRepository.save.mockResolvedValue({ ...existingItem, quantity: 4 });
+      mockCartItemRepository.save.mockResolvedValue({
+        ...existingItem,
+        quantity: 4,
+      });
 
       const result = await service.addToCart('uuid-1', 1, 2);
       expect(result.quantity).toBe(4);

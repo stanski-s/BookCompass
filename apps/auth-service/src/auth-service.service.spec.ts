@@ -10,8 +10,13 @@ jest.mock('bcrypt');
 
 describe('AuthServiceService', () => {
   let service: AuthServiceService;
-  let mockAuthUserRepository: any;
-  let mockJwtService: any;
+  let mockAuthUserRepository: {
+    findOne: jest.Mock;
+    create: jest.Mock;
+    save: jest.Mock;
+    update: jest.Mock;
+  };
+  let mockJwtService: { signAsync: jest.Mock };
 
   beforeEach(async () => {
     mockAuthUserRepository = {
@@ -54,19 +59,28 @@ describe('AuthServiceService', () => {
     it('should successfully register a new user', async () => {
       mockAuthUserRepository.findOne.mockResolvedValue(null);
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
-      const newUser = { id: 'uuid-1', email: 'test@test.com', password_hash: 'hashedPassword' };
+      const newUser = {
+        id: 'uuid-1',
+        email: 'test@test.com',
+        password_hash: 'hashedPassword',
+      };
       mockAuthUserRepository.create.mockReturnValue(newUser);
       mockAuthUserRepository.save.mockResolvedValue(newUser);
       mockJwtService.signAsync.mockResolvedValue('token');
 
-      const result = await service.register({ email: 'test@test.com', password: 'password' });
+      const result = await service.register({
+        email: 'test@test.com',
+        password: 'password',
+      });
 
       expect(result).toHaveProperty('id', 'uuid-1');
       expect(result).toHaveProperty('access_token', 'token');
     });
 
     it('should throw ConflictException if email exists', async () => {
-      mockAuthUserRepository.findOne.mockResolvedValue({ email: 'test@test.com' });
+      mockAuthUserRepository.findOne.mockResolvedValue({
+        email: 'test@test.com',
+      });
 
       await expect(
         service.register({ email: 'test@test.com', password: 'password' }),
@@ -76,19 +90,29 @@ describe('AuthServiceService', () => {
 
   describe('login', () => {
     it('should successfully login user and return tokens', async () => {
-      const existingUser = { id: 'uuid-1', email: 'test@test.com', password_hash: 'hashedPassword' };
+      const existingUser = {
+        id: 'uuid-1',
+        email: 'test@test.com',
+        password_hash: 'hashedPassword',
+      };
       mockAuthUserRepository.findOne.mockResolvedValue(existingUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       mockJwtService.signAsync.mockResolvedValue('token');
 
-      const result = await service.login({ email: 'test@test.com', password: 'password' });
+      const result = await service.login({
+        email: 'test@test.com',
+        password: 'password',
+      });
 
       expect(result).toHaveProperty('access_token', 'token');
       expect(result).toHaveProperty('refresh_token', 'token');
     });
 
     it('should throw UnauthorizedException on wrong password', async () => {
-      mockAuthUserRepository.findOne.mockResolvedValue({ email: 'test@test.com', password_hash: 'hash' });
+      mockAuthUserRepository.findOne.mockResolvedValue({
+        email: 'test@test.com',
+        password_hash: 'hash',
+      });
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(

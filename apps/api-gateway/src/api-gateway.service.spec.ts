@@ -5,10 +5,10 @@ import { of, throwError } from 'rxjs';
 
 describe('ApiGatewayService', () => {
   let service: ApiGatewayService;
-  let mockAuthClient: any;
-  let mockUserClient: any;
-  let mockBookClient: any;
-  let mockOrderClient: any;
+  let mockAuthClient: { send: jest.Mock };
+  let mockUserClient: { send: jest.Mock };
+  let mockBookClient: { send: jest.Mock };
+  let mockOrderClient: { send: jest.Mock };
 
   beforeEach(async () => {
     mockAuthClient = { send: jest.fn() };
@@ -67,15 +67,15 @@ describe('ApiGatewayService', () => {
   });
 
   describe('cart operations', () => {
-    it('should get cart items', async () => {
+    it('should get cart items', () => {
       mockUserClient.send.mockReturnValue(of([{ bookId: 1, quantity: 2 }]));
-      const result = await service.getCart('uuid-1');
+      const result = service.getCart('uuid-1');
 
       // Since it returns an Observable, we might need to test the observable or the lastValueFrom
       // The controller returns the observable, and NestJS resolves it.
       // We'll just verify the mock was called correctly.
-      let cart: any;
-      result.subscribe((data: any) => {
+      let cart: unknown;
+      result.subscribe((data: unknown) => {
         cart = data;
       });
       expect(cart).toEqual([{ bookId: 1, quantity: 2 }]);
@@ -91,8 +91,8 @@ describe('ApiGatewayService', () => {
       mockOrderClient.send.mockReturnValue(of({ id: 'order-1' }));
       const result = service.checkout('uuid-1');
 
-      let order: any;
-      result.subscribe((data: any) => {
+      let order: unknown;
+      result.subscribe((data: unknown) => {
         order = data;
       });
       expect(order).toEqual({ id: 'order-1' });
