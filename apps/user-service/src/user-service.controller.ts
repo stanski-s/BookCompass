@@ -28,13 +28,22 @@ export class UserServiceController {
   }
 
   @MessagePattern('user.addToCart')
-  addToCart(@Payload() payload: { userId: string; bookId: number; quantity: number }) {
-    return this.userServiceService.addToCart(payload.userId, payload.bookId, payload.quantity);
+  addToCart(
+    @Payload() payload: { userId: string; bookId: number; quantity: number },
+  ) {
+    return this.userServiceService.addToCart(
+      payload.userId,
+      payload.bookId,
+      payload.quantity,
+    );
   }
 
   @MessagePattern('user.removeFromCart')
   removeFromCart(@Payload() payload: { userId: string; bookId: number }) {
-    return this.userServiceService.removeFromCart(payload.userId, payload.bookId);
+    return this.userServiceService.removeFromCart(
+      payload.userId,
+      payload.bookId,
+    );
   }
 
   @MessagePattern('user.clearCart')

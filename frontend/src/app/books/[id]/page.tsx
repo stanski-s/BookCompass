@@ -7,7 +7,7 @@ async function getBook(id: string) {
     const res = await fetch(`http://localhost:8080/api/books/${id}`, { cache: 'no-store' });
     if (!res.ok) return null;
     return res.json();
-  } catch (err) {
+  } catch {
     return null;
   }
 }

@@ -23,7 +23,8 @@
     "start:auth": "nest start auth-service --watch",
     "start:user": "nest start user-service --watch",
     "start:book": "nest start book-service --watch",
-    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow\" -n \"GATEWAY,AUTH,USER,BOOK\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\""
+    "start:order": "nest start order-service --watch",
+    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow,green\" -n \"GATEWAY,AUTH,USER,BOOK,ORDER\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\" \"npm run start:order\""
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

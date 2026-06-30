@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-
 @Entity()
 export class Book {
   @PrimaryGeneratedColumn()
@@ -23,5 +22,4 @@ export class Book {
 
   @Column({ type: 'text' })
   description!: string;
-
 }

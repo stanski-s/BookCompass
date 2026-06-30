@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  const cartCount = 0; // Temporarily hardcoded until we implement Cart API
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     setIsAuthenticated(!!localStorage.getItem('accessToken'));
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);

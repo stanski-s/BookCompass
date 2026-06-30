@@ -10,4 +10,4 @@ async function bootstrap() {
   await app.listen(8080);
   console.log(`API Gateway is running on: ${await app.getUrl()}`);
 }
-bootstrap();
+void bootstrap();

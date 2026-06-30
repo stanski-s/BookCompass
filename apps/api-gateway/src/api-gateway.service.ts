@@ -26,6 +26,7 @@ export class ApiGatewayService {
     @Inject('AUTH_SERVICE') private readonly authClient: ClientProxy,
     @Inject('USER_SERVICE') private readonly userClient: ClientProxy,
     @Inject('BOOK_SERVICE') private readonly bookClient: ClientProxy,
+    @Inject('ORDER_SERVICE') private readonly orderClient: ClientProxy,
   ) {}
 
   getHello(): string {
@@ -94,5 +95,32 @@ export class ApiGatewayService {
 
   createBook(createBookDto: CreateBookDto) {
     return this.bookClient.send<unknown>('book.create', createBookDto);
+  }
+
+  getCart(userId: string) {
+    return this.userClient.send<unknown[]>('user.getCart', userId);
+  }
+
+  addToCart(userId: string, bookId: number, quantity: number) {
+    return this.userClient.send<unknown>('user.addToCart', {
+      userId,
+      bookId,
+      quantity,
+    });
+  }
+
+  removeFromCart(userId: string, bookId: number) {
+    return this.userClient.send<unknown>('user.removeFromCart', {
+      userId,
+      bookId,
+    });
+  }
+
+  checkout(userId: string) {
+    return this.orderClient.send<unknown>('order.checkout', userId);
+  }
+
+  getOrders(userId: string) {
+    return this.orderClient.send<unknown[]>('order.getOrders', userId);
   }
 }

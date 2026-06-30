@@ -31,5 +31,4 @@ export class BookServiceController {
   findById(@Payload() id: number) {
     return this.bookServiceService.findById(id);
   }
-
 }

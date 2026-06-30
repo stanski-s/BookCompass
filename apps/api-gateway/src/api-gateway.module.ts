@@ -21,6 +21,11 @@ import { ApiGatewayService } from './api-gateway.service';
         transport: Transport.TCP,
         options: { host: 'localhost', port: 3003 },
       },
+      {
+        name: 'ORDER_SERVICE',
+        transport: Transport.TCP,
+        options: { host: 'localhost', port: 3004 },
+      },
     ]),
   ],
   controllers: [ApiGatewayController],
