@@ -4,8 +4,10 @@ import React, { useEffect, useState } from "react";
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem('accessToken'));
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
@@ -55,9 +57,16 @@ export default function NavBar() {
               {cartCount}
             </span>
           </button>
-          <button className="p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-on-surface">account_circle</span>
-          </button>
+          {isAuthenticated ? (
+            <button onClick={() => { localStorage.removeItem('accessToken'); setIsAuthenticated(false); window.location.reload(); }} className="font-label-md text-primary hover:bg-surface-container-high px-sm py-xs rounded transition-colors active:scale-95">
+              Logout
+            </button>
+          ) : (
+            <div className="flex gap-sm">
+              <a href="/login" className="font-label-md text-primary hover:bg-surface-container-high px-sm py-xs rounded transition-colors flex items-center active:scale-95">Login</a>
+              <a href="/register" className="font-label-md text-white bg-primary hover:shadow-lg px-md py-xs rounded transition-all flex items-center active:scale-95">Register</a>
+            </div>
+          )}
           <button className="md:hidden p-sm">
             <span className="material-symbols-outlined">menu</span>
           </button>
