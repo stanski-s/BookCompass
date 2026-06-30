@@ -5,18 +5,46 @@ import { usePathname } from "next/navigation";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
-  const cartCount = 0; // Temporarily hardcoded until we implement Cart API
+  const [cartCount, setCartCount] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const pathname = usePathname();
 
+  const fetchCart = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:8080/api/cart', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const count = data.reduce((acc: number, item: { quantity: number }) => acc + item.quantity, 0);
+        setCartCount(count);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    setIsAuthenticated(!!localStorage.getItem('accessToken'));
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsAuthenticated(true);
+      fetchCart();
+    }
+
+    const handleCartUpdate = () => fetchCart();
+    window.addEventListener('cartUpdated', handleCartUpdate);
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+    };
   }, []);
 
   return (
@@ -63,7 +91,7 @@ export default function NavBar() {
         </div>
 
         <div className="flex items-center gap-md">
-          <button className="relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
+          <Link href="/cart" className="relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
             <span className="material-symbols-outlined text-on-surface">shopping_cart</span>
             <span
               className={`absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-surface transition-transform duration-300 ${
@@ -72,7 +100,7 @@ export default function NavBar() {
             >
               {cartCount}
             </span>
-          </button>
+          </Link>
           {isAuthenticated ? (
             <button onClick={() => { localStorage.removeItem('accessToken'); setIsAuthenticated(false); window.location.reload(); }} className="font-label-md text-primary hover:bg-surface-container-high px-sm py-xs rounded transition-colors active:scale-95">
               Logout

@@ -1,6 +1,7 @@
 import React from 'react';
 import NavBar from '@/components/NavBar';
 import Image from 'next/image';
+import AddToCartButton from '@/components/AddToCartButton';
 
 async function getBook(id: string) {
   try {
@@ -57,10 +58,7 @@ export default async function BookDetailPage(props: { params: Promise<{ id: stri
 
             <div className="py-md border-y border-outline-variant/30 flex items-center justify-between max-w-sm">
               <span className="font-headline-md text-primary">${Number(book.price || 0).toFixed(2)}</span>
-              <button className="bg-primary text-white px-xl py-sm rounded-lg shadow-lg hover:shadow-xl hover:bg-primary-container active:scale-95 transition-all font-label-md flex items-center gap-sm">
-                <span className="material-symbols-outlined text-[20px]">shopping_cart</span>
-                Add to Cart
-              </button>
+              <AddToCartButton bookId={book.id} />
             </div>
 
             <div className="space-y-sm pt-sm">
