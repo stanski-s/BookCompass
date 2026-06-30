@@ -5,7 +5,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { BookServiceController } from './book-service.controller';
 import { BookServiceService } from './book-service.service';
 import { Book } from './book.entity';
-import { Review } from './review.entity';
 
 @Module({
   imports: [
@@ -18,12 +17,12 @@ import { Review } from './review.entity';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         url: configService.get<string>('BOOK_DB_URL'),
-        entities: [Book, Review],
+        entities: [Book],
         synchronize: true, // na produkcję do zmiany na false
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Book, Review]),
+    TypeOrmModule.forFeature([Book]),
     ClientsModule.registerAsync([
       {
         name: 'RMQ_CLIENT',

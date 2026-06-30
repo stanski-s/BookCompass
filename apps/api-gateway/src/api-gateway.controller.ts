@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ApiGatewayService } from './api-gateway.service';
 
 export interface RegisterDto {
@@ -46,6 +46,16 @@ export class ApiGatewayController {
   @Get('books')
   getBooks() {
     return this.apiGatewayService.getBooks();
+  }
+
+  @Get('books/bestsellers')
+  getBestsellers() {
+    return this.apiGatewayService.getBestsellers();
+  }
+
+  @Get('books/:id')
+  getBookById(@Param('id') id: string) {
+    return this.apiGatewayService.getBookById(Number(id));
   }
 
   @Post('books')

@@ -1,7 +1,9 @@
+import { RegisterData, LoginData } from './types';
+
 const BASE_URL = 'http://localhost:8080';
 
 export const apiClient = {
-  async register(data: any) {
+  async register(data: RegisterData) {
     const res = await fetch(`${BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -10,7 +12,7 @@ export const apiClient = {
     if (!res.ok) throw new Error('Registration failed');
     return res.json();
   },
-  async login(data: any) {
+  async login(data: LoginData) {
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

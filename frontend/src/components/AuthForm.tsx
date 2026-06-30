@@ -19,7 +19,7 @@ export default function AuthForm({ type }: { type: 'login' | 'register' }) {
         await apiClient.register({ email, password, username });
         window.location.href = '/login';
       }
-    } catch (err) {
+    } catch {
       alert(`${type === 'login' ? 'Login' : 'Registration'} error`);
     }
   };

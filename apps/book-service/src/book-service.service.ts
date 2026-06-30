@@ -4,16 +4,12 @@ import { Repository } from 'typeorm';
 import { ClientProxy } from '@nestjs/microservices';
 import { Book } from './book.entity';
 import { CreateBookDto } from './create-book.dto';
-import { Review } from './review.entity';
-import { CreateReviewDto } from './create-review.dto';
 
 @Injectable()
 export class BookServiceService {
   constructor(
     @InjectRepository(Book)
     private readonly bookRepository: Repository<Book>,
-    @InjectRepository(Review)
-    private readonly reviewRepository: Repository<Review>,
     @Inject('RMQ_CLIENT')
     private readonly rmqClient: ClientProxy,
   ) {}
@@ -33,16 +29,18 @@ export class BookServiceService {
     return this.bookRepository.find();
   }
 
-  async addReview(
-    bookId: number,
-    createReviewDto: CreateReviewDto,
-  ): Promise<Review> {
-    const review = this.reviewRepository.create({
-      ...createReviewDto,
-      book: { id: bookId },
+  async getBestsellers(): Promise<Book[]> {
+    return this.bookRepository.find({
+      take: 4,
+      order: {
+        id: 'ASC', // Placeholder logic for bestsellers
+      },
     });
-    const savedReview = await this.reviewRepository.save(review);
-    this.rmqClient.emit('review_added', savedReview);
-    return savedReview;
+  }
+
+  async findById(id: number): Promise<Book | null> {
+    return this.bookRepository.findOne({
+      where: { id },
+    });
   }
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import NavBar from "@/components/NavBar";
 import BookGallery from "@/components/BookGallery";
 
@@ -36,9 +37,9 @@ export default async function Home() {
                 Explore an exquisite collection of literary treasures, from modern masterpieces to timeless classics, delivered with intellectual serenity.
               </p>
               <div className="flex flex-col sm:flex-row gap-md pt-md">
-                <button className="bg-primary text-white px-xl py-md rounded-lg font-label-md hover:shadow-lg active:scale-95 transition-all">
+                <Link href="/bestsellers" className="bg-primary text-white px-xl py-md rounded-lg font-label-md hover:shadow-lg active:scale-95 transition-all text-center">
                   Shop Bestsellers
-                </button>
+                </Link>
                 <button className="border border-primary text-primary px-xl py-md rounded-lg font-label-md hover:bg-primary/5 active:scale-95 transition-all">
                   Join the Club
                 </button>
@@ -47,7 +48,7 @@ export default async function Home() {
           </div>
           <div className="hidden xl:block absolute right-[-5%] top-1/2 -translate-y-1/2 w-1/2">
             <div className="relative w-full aspect-[4/3] rounded-l-xxl overflow-hidden shadow-2xl border-l border-y border-outline-variant bg-surface-container-high flex items-center justify-center">
-               <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop" alt="Hero Library" className="object-cover w-full h-full" />
+               <Image src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop" alt="Hero Library" fill className="object-cover" unoptimized />
             </div>
           </div>
         </section>

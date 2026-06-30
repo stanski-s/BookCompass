@@ -1,7 +1,10 @@
 'use client';
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Book } from '@/lib/types';
 
-export default function BookGallery({ books }: { books: any[] }) {
+export default function BookGallery({ books }: { books: Book[] }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   const categories = useMemo(() => {
@@ -54,11 +57,13 @@ export default function BookGallery({ books }: { books: any[] }) {
       <section className="max-w-container-max mx-auto px-lg md:px-xl mb-xxl">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-lg">
           {filteredBooks.length > 0 ? (
-            filteredBooks.map((book: any) => (
+            filteredBooks.map((book: Book) => (
               <div key={book.id} className="group">
                 <div className="aspect-[2/3] w-full rounded-lg overflow-hidden bg-surface-container-high book-card-shadow transition-all duration-300 relative flex items-center justify-center">
                   {book.coverUrl ? (
-                    <img src={book.coverUrl} alt={book.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+                    <Link href={`/books/${book.id}`} className="w-full h-full block">
+                      <Image src={book.coverUrl} alt={book.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                    </Link>
                   ) : (
                     <span className="text-secondary">Book Cover</span>
                   )}
@@ -73,7 +78,9 @@ export default function BookGallery({ books }: { books: any[] }) {
                     <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                     <span className="font-label-sm">4.9</span>
                   </div>
-                  <h3 className="font-headline-sm text-primary line-clamp-2 leading-tight">{book.title}</h3>
+                  <Link href={`/books/${book.id}`} className="hover:underline">
+                    <h3 className="font-headline-sm text-primary line-clamp-2 leading-tight">{book.title}</h3>
+                  </Link>
                   <p className="font-body-sm text-secondary">{book.author}</p>
                   <div className="flex items-center justify-between pt-sm">
                     <span className="font-label-md text-primary">${Number(book.price || 0).toFixed(2)}</span>

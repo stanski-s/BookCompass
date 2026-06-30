@@ -1,10 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsAuthenticated(!!localStorage.getItem('accessToken'));
@@ -26,13 +29,25 @@ export default function NavBar() {
           <span className="material-symbols-outlined text-primary text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             explore
           </span>
-          <span className="font-headline-sm text-headline-sm text-primary tracking-tight">BookCompass</span>
+          <Link href="/" className="font-headline-sm text-headline-sm text-primary tracking-tight">BookCompass</Link>
         </div>
 
         <div className="hidden lg:flex items-center gap-lg">
-          <a className="font-body-md text-primary border-b-2 border-primary pb-1" href="#">Browse</a>
-          <a className="font-body-md text-secondary hover:text-primary transition-colors" href="#">New Arrivals</a>
-          <a className="font-body-md text-secondary hover:text-primary transition-colors" href="#">Best Sellers</a>
+          <Link 
+            className={`font-body-md pb-1 transition-colors ${pathname === '/' ? 'text-primary border-b-2 border-primary' : 'text-secondary hover:text-primary border-b-2 border-transparent'}`} 
+            href="/"
+          >
+            Browse
+          </Link>
+          <a className="font-body-md text-secondary hover:text-primary transition-colors border-b-2 border-transparent pb-1" href="#">
+            New Arrivals
+          </a>
+          <Link 
+            className={`font-body-md pb-1 transition-colors ${pathname === '/bestsellers' ? 'text-primary border-b-2 border-primary' : 'text-secondary hover:text-primary border-b-2 border-transparent'}`} 
+            href="/bestsellers"
+          >
+            Best Sellers
+          </Link>
         </div>
 
         <div className="hidden md:flex flex-1 max-w-sm mx-lg relative group">

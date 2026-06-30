@@ -2,7 +2,6 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { BookServiceService } from './book-service.service';
 import { CreateBookDto } from './create-book.dto';
-import { CreateReviewDto } from './create-review.dto';
 
 @Controller()
 export class BookServiceController {
@@ -23,13 +22,14 @@ export class BookServiceController {
     return this.bookServiceService.findAll();
   }
 
-  @MessagePattern('book.addReview')
-  addReview(
-    @Payload() payload: { bookId: number; createReviewDto: CreateReviewDto },
-  ) {
-    return this.bookServiceService.addReview(
-      payload.bookId,
-      payload.createReviewDto,
-    );
+  @MessagePattern('book.bestsellers')
+  getBestsellers() {
+    return this.bookServiceService.getBestsellers();
   }
+
+  @MessagePattern('book.findById')
+  findById(@Payload() id: number) {
+    return this.bookServiceService.findById(id);
+  }
+
 }

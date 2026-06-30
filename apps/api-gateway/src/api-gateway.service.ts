@@ -84,6 +84,14 @@ export class ApiGatewayService {
     return this.bookClient.send<unknown[]>('book.findAll', {});
   }
 
+  getBestsellers() {
+    return this.bookClient.send<unknown[]>('book.bestsellers', {});
+  }
+
+  getBookById(id: number) {
+    return this.bookClient.send<unknown>('book.findById', id);
+  }
+
   createBook(createBookDto: CreateBookDto) {
     return this.bookClient.send<unknown>('book.create', createBookDto);
   }
