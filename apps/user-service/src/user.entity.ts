@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import { CartItem } from './cart-item.entity';
 
 @Entity()
 export class User {
@@ -10,4 +11,7 @@ export class User {
 
   @Column({ nullable: true })
   bio!: string;
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.user)
+  cartItems!: CartItem[];
 }

@@ -21,4 +21,24 @@ export class UserServiceController {
   findAll() {
     return this.userServiceService.findAll();
   }
+
+  @MessagePattern('user.getCart')
+  getCart(@Payload() userId: string) {
+    return this.userServiceService.getCart(userId);
+  }
+
+  @MessagePattern('user.addToCart')
+  addToCart(@Payload() payload: { userId: string; bookId: number; quantity: number }) {
+    return this.userServiceService.addToCart(payload.userId, payload.bookId, payload.quantity);
+  }
+
+  @MessagePattern('user.removeFromCart')
+  removeFromCart(@Payload() payload: { userId: string; bookId: number }) {
+    return this.userServiceService.removeFromCart(payload.userId, payload.bookId);
+  }
+
+  @MessagePattern('user.clearCart')
+  clearCart(@Payload() userId: string) {
+    return this.userServiceService.clearCart(userId);
+  }
 }

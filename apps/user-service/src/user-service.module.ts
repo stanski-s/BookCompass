@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserServiceController } from './user-service.controller';
 import { UserServiceService } from './user-service.service';
 import { User } from './user.entity';
+import { CartItem } from './cart-item.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { User } from './user.entity';
         synchronize: true, // dev only
       }),
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, CartItem]),
   ],
   controllers: [UserServiceController],
   providers: [UserServiceService],
