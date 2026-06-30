@@ -46,7 +46,7 @@ export default async function Home() {
           </div>
           <div className="hidden xl:block absolute right-[-5%] top-1/2 -translate-y-1/2 w-1/2">
             <div className="relative w-full aspect-[4/3] rounded-l-xxl overflow-hidden shadow-2xl border-l border-y border-outline-variant bg-surface-container-high flex items-center justify-center">
-               <span className="text-secondary">Image Placeholder</span>
+               <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop" alt="Hero Library" className="object-cover w-full h-full" />
             </div>
           </div>
         </section>
@@ -71,7 +71,11 @@ export default async function Home() {
               books.map((book: any) => (
                 <div key={book.id} className="group">
                   <div className="aspect-[2/3] w-full rounded-lg overflow-hidden bg-surface-container-high book-card-shadow transition-all duration-300 relative flex items-center justify-center">
-                    <span className="text-secondary">Book Cover</span>
+                    {book.coverUrl ? (
+                      <img src={book.coverUrl} alt={book.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <span className="text-secondary">Book Cover</span>
+                    )}
                     <div className="absolute top-sm right-sm opacity-0 group-hover:opacity-100 transition-opacity">
                       <button className="bg-white/90 backdrop-blur p-xs rounded-full shadow-md text-primary">
                         <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>favorite</span>
@@ -86,7 +90,7 @@ export default async function Home() {
                     <h3 className="font-headline-sm text-primary line-clamp-2 leading-tight">{book.title}</h3>
                     <p className="font-body-sm text-secondary">{book.author}</p>
                     <div className="flex items-center justify-between pt-sm">
-                      <span className="font-label-md text-primary">$28.00</span>
+                      <span className="font-label-md text-primary">${Number(book.price || 0).toFixed(2)}</span>
                       <button className="add-to-cart-btn p-xs bg-primary-container text-white rounded transition-colors hover:bg-primary active:scale-90">
                         <span className="material-symbols-outlined">add_shopping_cart</span>
                       </button>
