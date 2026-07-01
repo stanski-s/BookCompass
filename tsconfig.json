@@ -34,5 +34,10 @@
       "node",
       "jest"
     ]
-  }
+  },
+  "exclude": [
+    "frontend",
+    "node_modules",
+    "dist"
+  ]
 }

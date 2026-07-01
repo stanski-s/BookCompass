@@ -4,26 +4,17 @@ import {
   Post,
   Body,
   Param,
-  Headers,
-  UnauthorizedException,
   Delete,
+  Res,
+  UseGuards,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiGatewayService } from './api-gateway.service';
-
-function extractUserId(authHeader?: string): string {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new UnauthorizedException('Missing token');
-  }
-  const token = authHeader.split(' ')[1];
-  try {
-    const payload = JSON.parse(
-      Buffer.from(token.split('.')[1], 'base64').toString(),
-    ) as { sub: string };
-    return payload.sub;
-  } catch {
-    throw new UnauthorizedException('Invalid token');
-  }
-}
+import { lastValueFrom } from 'rxjs';
+import type { Response, Request } from 'express';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { CurrentUser } from './auth/current-user.decorator';
 
 export interface RegisterDto {
   email: string;
@@ -53,18 +44,96 @@ export class ApiGatewayController {
   }
 
   @Post('auth/register')
-  register(@Body() registerDto: RegisterDto) {
-    return this.apiGatewayService.register(registerDto);
+  async register(
+    @Body() registerDto: RegisterDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.apiGatewayService.register(registerDto);
+    response.cookie('accessToken', result.access_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    response.cookie('refreshToken', result.refresh_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return { message: 'Registration successful', username: result.username };
   }
 
   @Post('auth/login')
-  login(@Body() loginDto: LoginDto) {
-    return this.apiGatewayService.login(loginDto);
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await lastValueFrom(this.apiGatewayService.login(loginDto));
+    response.cookie('accessToken', result.access_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    response.cookie('refreshToken', result.refresh_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return { message: 'Login successful' };
   }
 
   @Post('auth/refresh')
-  refreshTokens(@Body() refreshDto: { userId: string; refreshToken: string }) {
-    return this.apiGatewayService.refreshTokens(refreshDto);
+  async refreshTokens(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshTokenCookie = request.cookies['refreshToken'] as string | undefined;
+    if (!refreshTokenCookie) {
+      throw new UnauthorizedException('Missing refresh token');
+    }
+    
+    // We assume we can decode it here to get the userId, or auth-service handles it
+    // Wait, the authService expects { userId: string; refreshToken: string }
+    // Let's extract the user ID by decoding it. Or better, just let auth-service verify the refresh token.
+    // Let's decode it safely (just payload) because it's a JWT.
+    try {
+      const payload = JSON.parse(
+        Buffer.from(refreshTokenCookie.split('.')[1], 'base64').toString(),
+      ) as { sub: string };
+      
+      const result = await lastValueFrom(
+        this.apiGatewayService.refreshTokens({
+          userId: payload.sub,
+          refreshToken: refreshTokenCookie,
+        })
+      );
+      
+      response.cookie('accessToken', result.access_token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+      response.cookie('refreshToken', result.refresh_token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+      return { message: 'Refresh successful' };
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  @Post('auth/logout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('accessToken', { path: '/' });
+    response.clearCookie('refreshToken', { path: '/' });
+    return { message: 'Logout successful' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('auth/me')
+  getMe(@CurrentUser() payload: { sub: string }) {
+    return { userId: payload.sub };
   }
 
   @Get('books')
@@ -87,58 +156,58 @@ export class ApiGatewayController {
     return this.apiGatewayService.createBook(createBookDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('cart')
-  getCart(@Headers('authorization') authHeader: string) {
-    const userId = extractUserId(authHeader);
-    return this.apiGatewayService.getCart(userId);
+  getCart(@CurrentUser() payload: { sub: string }) {
+    return this.apiGatewayService.getCart(payload.sub);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('cart')
   addToCart(
-    @Headers('authorization') authHeader: string,
+    @CurrentUser() payload: { sub: string },
     @Body() body: { bookId: number; quantity?: number },
   ) {
-    const userId = extractUserId(authHeader);
     return this.apiGatewayService.addToCart(
-      userId,
+      payload.sub,
       body.bookId,
       body.quantity || 1,
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('cart/:bookId')
   removeFromCart(
-    @Headers('authorization') authHeader: string,
+    @CurrentUser() payload: { sub: string },
     @Param('bookId') bookId: string,
   ) {
-    const userId = extractUserId(authHeader);
-    return this.apiGatewayService.removeFromCart(userId, Number(bookId));
+    return this.apiGatewayService.removeFromCart(payload.sub, Number(bookId));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('orders/checkout')
-  checkout(@Headers('authorization') authHeader: string) {
-    const userId = extractUserId(authHeader);
-    return this.apiGatewayService.checkout(userId);
+  checkout(@CurrentUser() payload: { sub: string }) {
+    return this.apiGatewayService.checkout(payload.sub);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('orders')
-  getOrders(@Headers('authorization') authHeader: string) {
-    const userId = extractUserId(authHeader);
-    return this.apiGatewayService.getOrders(userId);
+  getOrders(@CurrentUser() payload: { sub: string }) {
+    return this.apiGatewayService.getOrders(payload.sub);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('liked-books')
-  getLikedBooks(@Headers('authorization') authHeader: string) {
-    const userId = extractUserId(authHeader);
-    return this.apiGatewayService.getLikedBooks(userId);
+  getLikedBooks(@CurrentUser() payload: { sub: string }) {
+    return this.apiGatewayService.getLikedBooks(payload.sub);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('liked-books')
   toggleLikedBook(
-    @Headers('authorization') authHeader: string,
+    @CurrentUser() payload: { sub: string },
     @Body() body: { bookId: number },
   ) {
-    const userId = extractUserId(authHeader);
-    return this.apiGatewayService.toggleLikedBook(userId, body.bookId);
+    return this.apiGatewayService.toggleLikedBook(payload.sub, body.bookId);
   }
 }

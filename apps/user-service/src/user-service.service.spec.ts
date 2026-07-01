@@ -121,7 +121,7 @@ describe('UserServiceService', () => {
         quantity: 4,
       });
 
-      const result = await service.addToCart('uuid-1', 1, 2) as any;
+      const result = (await service.addToCart('uuid-1', 1, 2)) as CartItem;
       expect(result.quantity).toBe(4);
       expect(existingItem.quantity).toBe(4); // mutated in service
       expect(mockCartItemRepository.save).toHaveBeenCalledWith(existingItem);

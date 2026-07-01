@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { JwtModule } from '@nestjs/jwt';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 
@@ -27,6 +28,9 @@ import { ApiGatewayService } from './api-gateway.service';
         options: { host: 'localhost', port: 3004 },
       },
     ]),
+    JwtModule.register({
+      secret: 'super-secret',
+    }),
   ],
   controllers: [ApiGatewayController],
   providers: [ApiGatewayService],
