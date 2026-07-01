@@ -103,8 +103,8 @@ export default function NavBar() {
 
         <div className="flex items-center gap-md">
           {isAuthenticated && (
-            <Link href="/liked" className="relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
-              <span className="material-symbols-outlined text-on-surface">favorite</span>
+            <Link href="/liked" className={`relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95 ${pathname === '/liked' ? 'bg-primary/10' : ''}`}>
+              <span className={`material-symbols-outlined ${pathname === '/liked' ? 'text-primary' : 'text-on-surface'}`} style={pathname === '/liked' ? { fontVariationSettings: "'FILL' 1" } : {}}>favorite</span>
               <span
                 className={`absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-surface transition-transform duration-300 ${
                   likedBookIds.length > 0 ? "scale-100" : "scale-0"
@@ -114,8 +114,8 @@ export default function NavBar() {
               </span>
             </Link>
           )}
-          <Link href="/cart" className="relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-on-surface">shopping_cart</span>
+          <Link href="/cart" className={`relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95 ${pathname === '/cart' ? 'bg-primary/10' : ''}`}>
+            <span className={`material-symbols-outlined ${pathname === '/cart' ? 'text-primary' : 'text-on-surface'}`} style={pathname === '/cart' ? { fontVariationSettings: "'FILL' 1" } : {}}>shopping_cart</span>
             <span
               className={`absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-surface transition-transform duration-300 ${
                 cartCount > 0 ? "scale-100" : "scale-0"
