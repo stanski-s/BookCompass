@@ -1,20 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientProxy } from '@nestjs/microservices';
 import { ReviewServiceService } from './review-service.service';
 import { Review } from './review.entity';
 
 describe('ReviewServiceService', () => {
   let service: ReviewServiceService;
-  let rmqClient: ClientProxy;
 
   const mockRepository = {
-    create: jest.fn().mockImplementation((dto) => ({
-      ...dto,
-      id: Date.now(),
-      createdAt: new Date(),
-    })),
-    save: jest.fn().mockImplementation((review) => Promise.resolve(review)),
+    create: jest.fn().mockImplementation(
+      (dto: Partial<Review>) =>
+        ({
+          ...dto,
+          id: Date.now(),
+          createdAt: new Date(),
+        }) as Review,
+    ),
+    save: jest
+      .fn()
+      .mockImplementation((review: Review) => Promise.resolve(review)),
     find: jest.fn(),
   };
 
@@ -38,7 +41,6 @@ describe('ReviewServiceService', () => {
     }).compile();
 
     service = module.get<ReviewServiceService>(ReviewServiceService);
-    rmqClient = module.get<ClientProxy>('RMQ_CLIENT');
   });
 
   it('should be defined', () => {
@@ -47,11 +49,17 @@ describe('ReviewServiceService', () => {
 
   describe('createReview', () => {
     it('should save a new review and emit event', async () => {
-      const dto = { bookId: 1, userId: 'user-uuid-1', rating: 5, comment: 'Great book!' };
+      const dto = {
+        bookId: 1,
+        userId: 'user-uuid-1',
+        rating: 5,
+        comment: 'Great book!',
+      };
       const result = await service.createReview(dto);
 
       expect(mockRepository.create).toHaveBeenCalledWith({
         ...dto,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         createdAt: expect.any(Date),
       });
       expect(mockRepository.save).toHaveBeenCalledWith(result);
@@ -68,7 +76,13 @@ describe('ReviewServiceService', () => {
       const bookId = 1;
       const expectedReviews = [
         { id: 1, bookId, userId: 'user-uuid-1', rating: 4, comment: 'Good' },
-        { id: 2, bookId, userId: 'user-uuid-2', rating: 5, comment: 'Excellent' },
+        {
+          id: 2,
+          bookId,
+          userId: 'user-uuid-2',
+          rating: 5,
+          comment: 'Excellent',
+        },
       ];
       mockRepository.find.mockResolvedValue(expectedReviews);
 

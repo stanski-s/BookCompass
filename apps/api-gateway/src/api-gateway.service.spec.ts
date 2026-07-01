@@ -9,12 +9,14 @@ describe('ApiGatewayService', () => {
   let mockUserClient: { send: jest.Mock };
   let mockBookClient: { send: jest.Mock };
   let mockOrderClient: { send: jest.Mock };
+  let mockReviewClient: { send: jest.Mock };
 
   beforeEach(async () => {
     mockAuthClient = { send: jest.fn() };
     mockUserClient = { send: jest.fn() };
     mockBookClient = { send: jest.fn() };
     mockOrderClient = { send: jest.fn() };
+    mockReviewClient = { send: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -23,6 +25,7 @@ describe('ApiGatewayService', () => {
         { provide: 'USER_SERVICE', useValue: mockUserClient },
         { provide: 'BOOK_SERVICE', useValue: mockBookClient },
         { provide: 'ORDER_SERVICE', useValue: mockOrderClient },
+        { provide: 'REVIEW_SERVICE', useValue: mockReviewClient },
       ],
     }).compile();
 
