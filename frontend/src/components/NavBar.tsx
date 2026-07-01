@@ -2,12 +2,14 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLikedBooks } from "@/context/LikedBooksContext";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const pathname = usePathname();
+  const { likedBookIds } = useLikedBooks();
 
   const fetchCart = async () => {
     const token = localStorage.getItem('accessToken');
@@ -91,6 +93,18 @@ export default function NavBar() {
         </div>
 
         <div className="flex items-center gap-md">
+          {isAuthenticated && (
+            <Link href="/liked" className="relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
+              <span className="material-symbols-outlined text-on-surface">favorite</span>
+              <span
+                className={`absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-surface transition-transform duration-300 ${
+                  likedBookIds.length > 0 ? "scale-100" : "scale-0"
+                }`}
+              >
+                {likedBookIds.length}
+              </span>
+            </Link>
+          )}
           <Link href="/cart" className="relative p-sm hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
             <span className="material-symbols-outlined text-on-surface">shopping_cart</span>
             <span

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Book } from '@/lib/types';
 
 import AddToCartIconButton from '@/components/AddToCartIconButton';
+import LikeIconButton from '@/components/LikeIconButton';
 
 async function getBestsellers() {
   try {
@@ -45,9 +46,7 @@ export default async function BestsellersPage() {
                       <span className="text-secondary">Book Cover</span>
                     )}
                     <div className="absolute top-sm right-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="bg-white/90 backdrop-blur p-xs rounded-full shadow-md text-primary">
-                        <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>favorite</span>
-                      </button>
+                      <LikeIconButton bookId={book.id} />
                     </div>
                   </div>
                   <div className="mt-md space-y-xs">

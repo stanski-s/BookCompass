@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Book } from '@/lib/types';
 
 import AddToCartIconButton from './AddToCartIconButton';
+import LikeIconButton from './LikeIconButton';
 
 export default function BookGallery({ books }: { books: Book[] }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -70,9 +71,7 @@ export default function BookGallery({ books }: { books: Book[] }) {
                     <span className="text-secondary">Book Cover</span>
                   )}
                   <div className="absolute top-sm right-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="bg-white/90 backdrop-blur p-xs rounded-full shadow-md text-primary">
-                      <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>favorite</span>
-                    </button>
+                    <LikeIconButton bookId={book.id} />
                   </div>
                 </div>
                 <div className="mt-md space-y-xs">

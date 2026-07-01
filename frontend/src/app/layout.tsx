@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Explore an exquisite collection of literary treasures.",
 };
 
+import { LikedBooksProvider } from "@/context/LikedBooksContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,7 +33,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${sourceSerif.variable} bg-surface text-on-surface font-body-md selection:bg-primary-fixed selection:text-primary antialiased`}
       >
-        {children}
+        <LikedBooksProvider>
+          {children}
+        </LikedBooksProvider>
       </body>
     </html>
   );
