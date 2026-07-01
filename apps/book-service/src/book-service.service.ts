@@ -55,6 +55,7 @@ export class BookServiceService {
     book.reviewCount = newReviewCount;
     book.averageRating = newAverageRating;
 
-    await this.bookRepository.save(book);
+    const savedBook = await this.bookRepository.save(book);
+    this.rmqClient.emit('book_updated', savedBook);
   }
 }

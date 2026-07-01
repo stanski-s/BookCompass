@@ -11,6 +11,9 @@ describe('BookServiceService', () => {
     create: jest.Mock;
     save: jest.Mock;
   };
+  let mockRmqClient: {
+    emit: jest.Mock;
+  };
 
   beforeEach(async () => {
     mockBookRepository = {
@@ -19,6 +22,8 @@ describe('BookServiceService', () => {
       create: jest.fn(),
       save: jest.fn(),
     };
+
+    mockRmqClient = { emit: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -29,7 +34,7 @@ describe('BookServiceService', () => {
         },
         {
           provide: 'RMQ_CLIENT',
-          useValue: { emit: jest.fn() },
+          useValue: mockRmqClient,
         },
       ],
     }).compile();
@@ -72,6 +77,45 @@ describe('BookServiceService', () => {
       expect(mockBookRepository.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
       });
+    });
+  });
+
+  describe('create', () => {
+    it('should create a book and emit book_created', async () => {
+      const dto = {
+        title: 'New',
+        author: 'Author',
+        price: 10,
+        description: 'Desc',
+        categories: [],
+      };
+      const saved = { ...dto, id: 1 };
+      mockBookRepository.create.mockReturnValue(saved);
+      mockBookRepository.save.mockResolvedValue(saved);
+
+      const result = await service.create(dto);
+      expect(result).toEqual(saved);
+      expect(mockRmqClient.emit).toHaveBeenCalledWith('book_created', saved);
+    });
+  });
+
+  describe('updateReviewStats', () => {
+    it('should update stats and emit book_updated', async () => {
+      const mockBook = { id: 1, reviewCount: 2, averageRating: 4.0 };
+      mockBookRepository.findOne.mockResolvedValue(mockBook);
+      mockBookRepository.save.mockResolvedValue({
+        ...mockBook,
+        reviewCount: 3,
+        averageRating: 4.5,
+      });
+
+      await service.updateReviewStats(1, 5.0);
+
+      expect(mockBookRepository.save).toHaveBeenCalled();
+      expect(mockRmqClient.emit).toHaveBeenCalledWith(
+        'book_updated',
+        expect.objectContaining({ reviewCount: 3 }),
+      );
     });
   });
 });

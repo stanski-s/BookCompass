@@ -25,9 +25,11 @@
     "start:book": "nest start book-service --watch",
     "start:order": "nest start order-service --watch",
     "start:review": "nest start review-service --watch",
-    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow,green,red\" -n \"GATEWAY,AUTH,USER,BOOK,ORDER,REVIEW\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\" \"npm run start:order\" \"npm run start:review\""
+    "start:search": "nest start search-service --watch",
+    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow,green,red,white\" -n \"GATEWAY,AUTH,USER,BOOK,ORDER,REVIEW,SEARCH\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\" \"npm run start:order\" \"npm run start:review\" \"npm run start:search\""
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^9.4.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
