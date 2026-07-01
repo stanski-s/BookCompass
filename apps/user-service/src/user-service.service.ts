@@ -5,6 +5,8 @@ import { User } from './user.entity';
 import { CartItem } from './cart-item.entity';
 import { CreateUserDto } from './create-user.dto';
 
+import { LikedBook } from './liked-book.entity';
+
 @Injectable()
 export class UserServiceService {
   constructor(
@@ -12,6 +14,8 @@ export class UserServiceService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(CartItem)
     private readonly cartItemRepository: Repository<CartItem>,
+    @InjectRepository(LikedBook)
+    private readonly likedBookRepository: Repository<LikedBook>,
   ) {}
 
   getHello(): string {
@@ -62,7 +66,10 @@ export class UserServiceService {
     return this.cartItemRepository.save(cartItem);
   }
 
-  async removeFromCart(userId: string, bookId: number): Promise<{ success: boolean }> {
+  async removeFromCart(
+    userId: string,
+    bookId: number,
+  ): Promise<{ success: boolean }> {
     const items = await this.cartItemRepository.find({
       where: { user: { id: userId }, bookId },
     });
@@ -80,5 +87,33 @@ export class UserServiceService {
       await this.cartItemRepository.remove(items);
     }
     return { success: true };
+  }
+
+  async toggleLikedBook(
+    userId: string,
+    bookId: number,
+  ): Promise<{ success: boolean; isLiked: boolean }> {
+    const existing = await this.likedBookRepository.findOne({
+      where: { user: { id: userId }, bookId },
+    });
+
+    if (existing) {
+      await this.likedBookRepository.remove(existing);
+      return { success: true, isLiked: false };
+    }
+
+    const newLikedBook = this.likedBookRepository.create({
+      user: { id: userId },
+      bookId,
+    });
+    await this.likedBookRepository.save(newLikedBook);
+    return { success: true, isLiked: true };
+  }
+
+  async getLikedBooks(userId: string): Promise<number[]> {
+    const likedBooks = await this.likedBookRepository.find({
+      where: { user: { id: userId } },
+    });
+    return likedBooks.map((lb) => lb.bookId);
   }
 }

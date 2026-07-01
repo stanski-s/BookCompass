@@ -5,6 +5,7 @@ import { UserServiceController } from './user-service.controller';
 import { UserServiceService } from './user-service.service';
 import { User } from './user.entity';
 import { CartItem } from './cart-item.entity';
+import { LikedBook } from './liked-book.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { CartItem } from './cart-item.entity';
         synchronize: true, // dev only
       }),
     }),
-    TypeOrmModule.forFeature([User, CartItem]),
+    TypeOrmModule.forFeature([User, CartItem, LikedBook]),
   ],
   controllers: [UserServiceController],
   providers: [UserServiceService],

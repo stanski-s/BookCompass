@@ -3,6 +3,7 @@ import { UserServiceService } from './user-service.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { CartItem } from './cart-item.entity';
+import { LikedBook } from './liked-book.entity';
 
 describe('UserServiceService', () => {
   let service: UserServiceService;
@@ -17,6 +18,13 @@ describe('UserServiceService', () => {
     create: jest.Mock;
     save: jest.Mock;
     delete: jest.Mock;
+  };
+  let mockLikedBookRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+    create: jest.Mock;
+    save: jest.Mock;
+    remove: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -34,6 +42,14 @@ describe('UserServiceService', () => {
       delete: jest.fn(),
     };
 
+    mockLikedBookRepository = {
+      find: jest.fn(),
+      findOne: jest.fn(),
+      create: jest.fn(),
+      save: jest.fn(),
+      remove: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserServiceService,
@@ -44,6 +60,10 @@ describe('UserServiceService', () => {
         {
           provide: getRepositoryToken(CartItem),
           useValue: mockCartItemRepository,
+        },
+        {
+          provide: getRepositoryToken(LikedBook),
+          useValue: mockLikedBookRepository,
         },
       ],
     }).compile();
@@ -101,7 +121,7 @@ describe('UserServiceService', () => {
         quantity: 4,
       });
 
-      const result = await service.addToCart('uuid-1', 1, 2);
+      const result = await service.addToCart('uuid-1', 1, 2) as any;
       expect(result.quantity).toBe(4);
       expect(existingItem.quantity).toBe(4); // mutated in service
       expect(mockCartItemRepository.save).toHaveBeenCalledWith(existingItem);

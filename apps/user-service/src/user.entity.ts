@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 import { CartItem } from './cart-item.entity';
+import { LikedBook } from './liked-book.entity';
 
 @Entity()
 export class User {
@@ -14,4 +15,7 @@ export class User {
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.user)
   cartItems!: CartItem[];
+
+  @OneToMany(() => LikedBook, (likedBook) => likedBook.user)
+  likedBooks!: LikedBook[];
 }

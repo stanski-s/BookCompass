@@ -126,4 +126,19 @@ export class ApiGatewayController {
     const userId = extractUserId(authHeader);
     return this.apiGatewayService.getOrders(userId);
   }
+
+  @Get('liked-books')
+  getLikedBooks(@Headers('authorization') authHeader: string) {
+    const userId = extractUserId(authHeader);
+    return this.apiGatewayService.getLikedBooks(userId);
+  }
+
+  @Post('liked-books')
+  toggleLikedBook(
+    @Headers('authorization') authHeader: string,
+    @Body() body: { bookId: number },
+  ) {
+    const userId = extractUserId(authHeader);
+    return this.apiGatewayService.toggleLikedBook(userId, body.bookId);
+  }
 }

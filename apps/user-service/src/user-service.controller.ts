@@ -50,4 +50,17 @@ export class UserServiceController {
   clearCart(@Payload() userId: string) {
     return this.userServiceService.clearCart(userId);
   }
+
+  @MessagePattern('user.toggleLike')
+  toggleLike(@Payload() payload: { userId: string; bookId: number }) {
+    return this.userServiceService.toggleLikedBook(
+      payload.userId,
+      payload.bookId,
+    );
+  }
+
+  @MessagePattern('user.getLikes')
+  getLikes(@Payload() userId: string) {
+    return this.userServiceService.getLikedBooks(userId);
+  }
 }

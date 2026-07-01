@@ -123,4 +123,18 @@ export class ApiGatewayService {
   getOrders(userId: string) {
     return this.orderClient.send<unknown[]>('order.getOrders', userId);
   }
+
+  toggleLikedBook(userId: string, bookId: number) {
+    return this.userClient.send<{ success: boolean; isLiked: boolean }>(
+      'user.toggleLike',
+      {
+        userId,
+        bookId,
+      },
+    );
+  }
+
+  getLikedBooks(userId: string) {
+    return this.userClient.send<number[]>('user.getLikes', userId);
+  }
 }
