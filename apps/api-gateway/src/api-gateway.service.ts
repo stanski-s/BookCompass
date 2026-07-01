@@ -28,6 +28,7 @@ export class ApiGatewayService {
     @Inject('BOOK_SERVICE') private readonly bookClient: ClientProxy,
     @Inject('ORDER_SERVICE') private readonly orderClient: ClientProxy,
     @Inject('REVIEW_SERVICE') private readonly reviewClient: ClientProxy,
+    @Inject('SEARCH_SERVICE') private readonly searchClient: ClientProxy,
   ) {}
 
   getHello(): string {
@@ -150,5 +151,9 @@ export class ApiGatewayService {
 
   getBookReviews(bookId: number) {
     return this.reviewClient.send('get_book_reviews', { bookId });
+  }
+
+  searchBooks(query: any) {
+    return this.searchClient.send('search.query', query);
   }
 }

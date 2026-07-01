@@ -4,12 +4,17 @@ import { SearchServiceService } from './search-service.service';
 
 describe('SearchServiceController', () => {
   let controller: SearchServiceController;
-  let service: { indexBook: jest.Mock; deleteBook: jest.Mock };
+  let service: {
+    indexBook: jest.Mock;
+    deleteBook: jest.Mock;
+    searchBooks: jest.Mock;
+  };
 
   beforeEach(async () => {
     service = {
       indexBook: jest.fn(),
       deleteBook: jest.fn(),
+      searchBooks: jest.fn(),
     };
 
     const app: TestingModule = await Test.createTestingModule({
@@ -41,5 +46,13 @@ describe('SearchServiceController', () => {
     const mockBook = getMockBook();
     await controller.handleBookUpdated(mockBook);
     expect(service.indexBook).toHaveBeenCalledWith(mockBook);
+  });
+
+  it('should handle search.query', async () => {
+    const params = { q: 'test' };
+    service.searchBooks.mockResolvedValue([getMockBook()]);
+    const result = await controller.handleSearchQuery(params);
+    expect(service.searchBooks).toHaveBeenCalledWith(params);
+    expect(result).toEqual([getMockBook()]);
   });
 });

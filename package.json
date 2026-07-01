@@ -26,7 +26,16 @@
     "start:order": "nest start order-service --watch",
     "start:review": "nest start review-service --watch",
     "start:search": "nest start search-service --watch",
-    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow,green,red,white\" -n \"GATEWAY,AUTH,USER,BOOK,ORDER,REVIEW,SEARCH\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\" \"npm run start:order\" \"npm run start:review\" \"npm run start:search\""
+    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow,green,red,white\" -n \"GATEWAY,AUTH,USER,BOOK,ORDER,REVIEW,SEARCH\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\" \"npm run start:order\" \"npm run start:review\" \"npm run start:search\"",
+    "build:all": "nest build api-gateway && nest build auth-service && nest build user-service && nest build book-service && nest build order-service && nest build review-service && nest build search-service",
+    "start:api:dist": "node dist/apps/api-gateway/main",
+    "start:auth:dist": "node dist/apps/auth-service/main",
+    "start:user:dist": "node dist/apps/user-service/main",
+    "start:book:dist": "node dist/apps/book-service/main",
+    "start:order:dist": "node dist/apps/order-service/main",
+    "start:review:dist": "node dist/apps/review-service/main",
+    "start:search:dist": "node dist/apps/search-service/main",
+    "start:all:dist": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow,green,red,white\" -n \"GATEWAY,AUTH,USER,BOOK,ORDER,REVIEW,SEARCH\" \"npm run start:api:dist\" \"npm run start:auth:dist\" \"npm run start:user:dist\" \"npm run start:book:dist\" \"npm run start:order:dist\" \"npm run start:review:dist\" \"npm run start:search:dist\""
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.4.2",

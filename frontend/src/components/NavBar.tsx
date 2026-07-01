@@ -1,15 +1,24 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useLikedBooks } from "@/context/LikedBooksContext";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
+  const router = useRouter();
   const { likedBookIds } = useLikedBooks();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   const fetchCart = async () => {
     try {
@@ -90,16 +99,18 @@ export default function NavBar() {
           </Link>
         </div>
 
-        <div className="hidden md:flex flex-1 max-w-sm mx-lg relative group">
+        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-sm mx-lg relative group">
           <input
             className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-xl py-xs focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm"
             placeholder="Search titles, authors..."
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">
+          <button type="submit" className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors bg-transparent border-none p-0 cursor-pointer">
             search
-          </span>
-        </div>
+          </button>
+        </form>
 
         <div className="flex items-center gap-md">
           {isAuthenticated && (

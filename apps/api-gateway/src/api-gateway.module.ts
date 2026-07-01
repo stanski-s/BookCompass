@@ -32,6 +32,15 @@ import { ApiGatewayService } from './api-gateway.service';
         transport: Transport.TCP,
         options: { host: 'localhost', port: 3005 },
       },
+      {
+        name: 'SEARCH_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'search_queue',
+          queueOptions: { durable: false },
+        },
+      },
     ]),
     JwtModule.register({
       secret: 'super-secret',

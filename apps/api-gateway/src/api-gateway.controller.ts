@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   UnauthorizedException,
+  Query,
 } from '@nestjs/common';
 import { ApiGatewayService } from './api-gateway.service';
 import { lastValueFrom } from 'rxjs';
@@ -146,6 +147,11 @@ export class ApiGatewayController {
   @Get('books/:id')
   getBookById(@Param('id') id: string) {
     return this.apiGatewayService.getBookById(Number(id));
+  }
+
+  @Get('search')
+  searchBooks(@Query() query: any) {
+    return this.apiGatewayService.searchBooks(query);
   }
 
   @Post('books')

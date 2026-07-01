@@ -10,6 +10,7 @@ describe('ApiGatewayService', () => {
   let mockBookClient: { send: jest.Mock };
   let mockOrderClient: { send: jest.Mock };
   let mockReviewClient: { send: jest.Mock };
+  let mockSearchClient: { send: jest.Mock };
 
   beforeEach(async () => {
     mockAuthClient = { send: jest.fn() };
@@ -17,6 +18,7 @@ describe('ApiGatewayService', () => {
     mockBookClient = { send: jest.fn() };
     mockOrderClient = { send: jest.fn() };
     mockReviewClient = { send: jest.fn() };
+    mockSearchClient = { send: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -26,6 +28,7 @@ describe('ApiGatewayService', () => {
         { provide: 'BOOK_SERVICE', useValue: mockBookClient },
         { provide: 'ORDER_SERVICE', useValue: mockOrderClient },
         { provide: 'REVIEW_SERVICE', useValue: mockReviewClient },
+        { provide: 'SEARCH_SERVICE', useValue: mockSearchClient },
       ],
     }).compile();
 
@@ -103,6 +106,21 @@ describe('ApiGatewayService', () => {
         'order.checkout',
         'uuid-1',
       );
+    });
+  });
+
+  describe('search operations', () => {
+    it('should call searchBooks', () => {
+      mockSearchClient.send.mockReturnValue(of([]));
+      const result = service.searchBooks({ q: 'test' });
+      let data: unknown;
+      result.subscribe((res: unknown) => {
+        data = res;
+      });
+      expect(data).toEqual([]);
+      expect(mockSearchClient.send).toHaveBeenCalledWith('search.query', {
+        q: 'test',
+      });
     });
   });
 });
