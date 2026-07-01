@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Book } from '@/lib/types';
 
+import AddToCartIconButton from './AddToCartIconButton';
+
 export default function BookGallery({ books }: { books: Book[] }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -84,9 +86,7 @@ export default function BookGallery({ books }: { books: Book[] }) {
                   <p className="font-body-sm text-secondary">{book.author}</p>
                   <div className="flex items-center justify-between pt-sm">
                     <span className="font-label-md text-primary">${Number(book.price || 0).toFixed(2)}</span>
-                    <button className="add-to-cart-btn p-xs bg-primary-container text-white rounded transition-colors hover:bg-primary active:scale-90">
-                      <span className="material-symbols-outlined">add_shopping_cart</span>
-                    </button>
+                    <AddToCartIconButton bookId={book.id} />
                   </div>
                 </div>
               </div>

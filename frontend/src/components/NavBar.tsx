@@ -102,9 +102,12 @@ export default function NavBar() {
             </span>
           </Link>
           {isAuthenticated ? (
-            <button onClick={() => { localStorage.removeItem('accessToken'); setIsAuthenticated(false); window.location.reload(); }} className="font-label-md text-primary hover:bg-surface-container-high px-sm py-xs rounded transition-colors active:scale-95">
-              Logout
-            </button>
+            <div className="flex items-center gap-2">
+              <Link href="/orders" className={`font-label-md hover:bg-surface-container-high px-sm py-xs rounded transition-colors active:scale-95 ${pathname === '/orders' ? 'text-primary font-bold' : 'text-secondary hover:text-primary'}`}>Orders</Link>
+              <button onClick={() => { localStorage.removeItem('accessToken'); setIsAuthenticated(false); window.location.reload(); }} className="font-label-md text-primary hover:bg-surface-container-high px-sm py-xs rounded transition-colors active:scale-95">
+                Logout
+              </button>
+            </div>
           ) : (
             <div className="flex gap-sm">
               <a href="/login" className="font-label-md text-primary hover:bg-surface-container-high px-sm py-xs rounded transition-colors flex items-center active:scale-95">Login</a>

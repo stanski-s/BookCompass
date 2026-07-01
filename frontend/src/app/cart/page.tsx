@@ -86,6 +86,53 @@ export default function CartPage() {
     }
   };
 
+  const handleRemove = async (bookId: number) => {
+    const token = localStorage.getItem('accessToken');
+    try {
+      const res = await fetch(`http://localhost:8080/api/cart/${bookId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setCartItems(prev => prev.filter(item => item.bookId !== bookId));
+        window.dispatchEvent(new Event('cartUpdated'));
+      } else {
+        alert('Failed to remove item');
+      }
+    } catch (err) {
+      console.error('Remove error', err);
+    }
+  };
+
+  const handleUpdateQuantity = async (bookId: number, change: number, currentQuantity: number) => {
+    if (currentQuantity + change <= 0) {
+      handleRemove(bookId);
+      return;
+    }
+    
+    const token = localStorage.getItem('accessToken');
+    try {
+      const res = await fetch('http://localhost:8080/api/cart', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ bookId, quantity: change })
+      });
+      
+      if (res.ok) {
+        setCartItems(prev => prev.map(item => 
+          item.bookId === bookId 
+            ? { ...item, quantity: item.quantity + change }
+            : item
+        ));
+        window.dispatchEvent(new Event('cartUpdated'));
+      }
+    } catch (err) {
+      console.error('Update quantity error', err);
+    }
+  };
   const totalAmount = cartItems.reduce((acc, item) => {
     const price = item.book?.price ? Number(item.book.price) : 0;
     return acc + (price * item.quantity);
@@ -126,12 +173,29 @@ export default function CartPage() {
                   </div>
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-headline-sm text-primary line-clamp-1">{item.book?.title || 'Unknown Book'}</h3>
+                      <div className="flex justify-between items-start gap-2">
+                        <h3 className="font-headline-sm text-primary line-clamp-1">{item.book?.title || 'Unknown Book'}</h3>
+                        <button onClick={() => handleRemove(item.bookId)} className="text-secondary hover:text-red-500 transition-colors" title="Remove item">
+                          <span className="material-symbols-outlined text-[20px]">delete</span>
+                        </button>
+                      </div>
                       <p className="font-body-sm text-secondary">{item.book?.author || 'Unknown Author'}</p>
                     </div>
                     <div className="flex justify-between items-end">
-                      <div className="font-body-sm text-on-surface-variant">
-                        Qty: <span className="font-bold text-on-surface">{item.quantity}</span>
+                      <div className="flex items-center gap-2 bg-surface-container-low rounded-lg p-1 border border-outline-variant/30">
+                        <button 
+                          onClick={() => handleUpdateQuantity(item.bookId, -1, item.quantity)}
+                          className="w-6 h-6 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest hover:text-primary rounded transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">remove</span>
+                        </button>
+                        <span className="font-bold text-on-surface text-sm w-6 text-center">{item.quantity}</span>
+                        <button 
+                          onClick={() => handleUpdateQuantity(item.bookId, 1, item.quantity)}
+                          className="w-6 h-6 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest hover:text-primary rounded transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">add</span>
+                        </button>
                       </div>
                       <div className="font-headline-sm text-primary">
                         ${(Number(item.book?.price || 0) * item.quantity).toFixed(2)}
