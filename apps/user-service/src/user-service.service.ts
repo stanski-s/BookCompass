@@ -39,13 +39,20 @@ export class UserServiceService {
     userId: string,
     bookId: number,
     quantity: number,
-  ): Promise<CartItem> {
+  ): Promise<CartItem | { success: boolean }> {
     const existing = await this.cartItemRepository.findOne({
       where: { user: { id: userId }, bookId },
     });
     if (existing) {
       existing.quantity += quantity;
+      if (existing.quantity <= 0) {
+        await this.cartItemRepository.remove(existing);
+        return { success: true };
+      }
       return this.cartItemRepository.save(existing);
+    }
+    if (quantity <= 0) {
+      return { success: true };
     }
     const cartItem = this.cartItemRepository.create({
       user: { id: userId },
@@ -55,11 +62,23 @@ export class UserServiceService {
     return this.cartItemRepository.save(cartItem);
   }
 
-  async removeFromCart(userId: string, bookId: number): Promise<void> {
-    await this.cartItemRepository.delete({ user: { id: userId }, bookId });
+  async removeFromCart(userId: string, bookId: number): Promise<{ success: boolean }> {
+    const items = await this.cartItemRepository.find({
+      where: { user: { id: userId }, bookId },
+    });
+    if (items.length > 0) {
+      await this.cartItemRepository.remove(items);
+    }
+    return { success: true };
   }
 
-  async clearCart(userId: string): Promise<void> {
-    await this.cartItemRepository.delete({ user: { id: userId } });
+  async clearCart(userId: string): Promise<{ success: boolean }> {
+    const items = await this.cartItemRepository.find({
+      where: { user: { id: userId } },
+    });
+    if (items.length > 0) {
+      await this.cartItemRepository.remove(items);
+    }
+    return { success: true };
   }
 }

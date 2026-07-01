@@ -87,7 +87,7 @@ export class OrderServiceService {
   async getOrders(userId: string): Promise<Order[]> {
     return this.orderRepository.find({
       where: { userId },
-      relations: ['items'],
+      relations: { items: true },
       order: { createdAt: 'DESC' },
     });
   }
