@@ -11,6 +11,15 @@ export class Book {
   @Column()
   author!: string;
 
+  @Column({ default: 0 })
+  stock!: number;
+
+  @Column({ type: 'float', default: 0 })
+  averageRating!: number;
+
+  @Column({ default: 0 })
+  reviewCount!: number;
+
   @Column('decimal')
   price!: number;
 

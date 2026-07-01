@@ -43,4 +43,18 @@ export class BookServiceService {
       where: { id },
     });
   }
+
+  async updateReviewStats(bookId: number, rating: number): Promise<void> {
+    const book = await this.bookRepository.findOne({ where: { id: bookId } });
+    if (!book) return;
+
+    const newReviewCount = book.reviewCount + 1;
+    const newAverageRating =
+      (book.averageRating * book.reviewCount + rating) / newReviewCount;
+
+    book.reviewCount = newReviewCount;
+    book.averageRating = newAverageRating;
+
+    await this.bookRepository.save(book);
+  }
 }

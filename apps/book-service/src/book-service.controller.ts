@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, EventPattern, Payload } from '@nestjs/microservices';
 import { BookServiceService } from './book-service.service';
 import { CreateBookDto } from './create-book.dto';
 
@@ -30,5 +30,10 @@ export class BookServiceController {
   @MessagePattern('book.findById')
   findById(@Payload() id: number) {
     return this.bookServiceService.findById(id);
+  }
+
+  @EventPattern('review_created')
+  handleReviewCreated(@Payload() data: { bookId: number; rating: number }) {
+    return this.bookServiceService.updateReviewStats(data.bookId, data.rating);
   }
 }

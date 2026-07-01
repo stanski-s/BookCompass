@@ -210,4 +210,23 @@ export class ApiGatewayController {
   ) {
     return this.apiGatewayService.toggleLikedBook(payload.sub, body.bookId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('reviews')
+  addReview(
+    @CurrentUser() payload: { sub: string },
+    @Body() body: { bookId: number; rating: number; comment?: string },
+  ) {
+    return this.apiGatewayService.addReview(
+      Number(payload.sub),
+      body.bookId,
+      body.rating,
+      body.comment,
+    );
+  }
+
+  @Get('reviews/book/:bookId')
+  getBookReviews(@Param('bookId') bookId: string) {
+    return this.apiGatewayService.getBookReviews(Number(bookId));
+  }
 }

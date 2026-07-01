@@ -77,7 +77,9 @@ export default function BookGallery({ books }: { books: Book[] }) {
                 <div className="mt-md space-y-xs">
                   <div className="flex items-center gap-xs text-primary mb-xs">
                     <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    <span className="font-label-sm">4.9</span>
+                    <span className="font-label-sm">
+                      {book.averageRating && book.averageRating > 0 ? `${book.averageRating.toFixed(1)} (${book.reviewCount})` : 'New'}
+                    </span>
                   </div>
                   <Link href={`/books/${book.id}`} className="hover:underline">
                     <h3 className="font-headline-sm text-primary line-clamp-2 leading-tight">{book.title}</h3>

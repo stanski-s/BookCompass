@@ -27,6 +27,7 @@ export class ApiGatewayService {
     @Inject('USER_SERVICE') private readonly userClient: ClientProxy,
     @Inject('BOOK_SERVICE') private readonly bookClient: ClientProxy,
     @Inject('ORDER_SERVICE') private readonly orderClient: ClientProxy,
+    @Inject('REVIEW_SERVICE') private readonly reviewClient: ClientProxy,
   ) {}
 
   getHello(): string {
@@ -136,5 +137,18 @@ export class ApiGatewayService {
 
   getLikedBooks(userId: string) {
     return this.userClient.send<number[]>('user.getLikes', userId);
+  }
+
+  addReview(userId: number, bookId: number, rating: number, comment?: string) {
+    return this.reviewClient.send('add_review', {
+      userId,
+      bookId,
+      rating,
+      comment,
+    });
+  }
+
+  getBookReviews(bookId: number) {
+    return this.reviewClient.send('get_book_reviews', { bookId });
   }
 }

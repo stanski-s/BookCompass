@@ -6,6 +6,8 @@ export interface Book {
   categories: string[];
   coverUrl?: string;
   description?: string;
+  averageRating?: number;
+  reviewCount?: number;
 }
 
 export interface RegisterData {

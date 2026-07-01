@@ -50,7 +50,9 @@ export default async function BookDetailPage(props: { params: Promise<{ id: stri
             <div>
               <div className="flex items-center gap-xs text-primary mb-sm">
                 <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                <span className="font-label-md">4.9 (128 reviews)</span>
+                <span className="font-label-md">
+                  {book.averageRating && book.averageRating > 0 ? `${book.averageRating.toFixed(1)} (${book.reviewCount} reviews)` : 'New'}
+                </span>
               </div>
               <h1 className="font-headline-lg text-headline-lg text-primary leading-tight mb-xs">{book.title}</h1>
               <p className="font-body-lg text-secondary text-xl">{book.author}</p>

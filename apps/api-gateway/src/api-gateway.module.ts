@@ -27,6 +27,11 @@ import { ApiGatewayService } from './api-gateway.service';
         transport: Transport.TCP,
         options: { host: 'localhost', port: 3004 },
       },
+      {
+        name: 'REVIEW_SERVICE',
+        transport: Transport.TCP,
+        options: { host: 'localhost', port: 3005 },
+      },
     ]),
     JwtModule.register({
       secret: 'super-secret',
