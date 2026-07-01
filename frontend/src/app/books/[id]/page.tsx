@@ -2,6 +2,7 @@ import React from 'react';
 import NavBar from '@/components/NavBar';
 import Image from 'next/image';
 import AddToCartButton from '@/components/AddToCartButton';
+import BookReviews from '@/components/BookReviews';
 
 async function getBook(id: string) {
   try {
@@ -82,6 +83,9 @@ export default async function BookDetailPage(props: { params: Promise<{ id: stri
                 </div>
               </div>
             )}
+            
+            {/* Reviews Section */}
+            <BookReviews bookId={book.id} />
           </div>
         </div>
       </main>

@@ -13,8 +13,8 @@ export class Review {
   @Column()
   bookId!: number;
 
-  @Column()
-  userId!: number;
+  @Column('uuid')
+  userId!: string;
 
   @Column({ type: 'int' })
   rating!: number;

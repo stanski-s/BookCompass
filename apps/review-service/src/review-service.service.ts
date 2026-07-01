@@ -15,7 +15,7 @@ export class ReviewServiceService {
 
   async createReview(data: {
     bookId: number;
-    userId: number;
+    userId: string;
     rating: number;
     comment?: string;
   }) {

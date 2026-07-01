@@ -24,7 +24,8 @@
     "start:user": "nest start user-service --watch",
     "start:book": "nest start book-service --watch",
     "start:order": "nest start order-service --watch",
-    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow,green\" -n \"GATEWAY,AUTH,USER,BOOK,ORDER\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\" \"npm run start:order\""
+    "start:review": "nest start review-service --watch",
+    "start:all": "npm run start:infra && concurrently -c \"magenta,cyan,blue,yellow,green,red\" -n \"GATEWAY,AUTH,USER,BOOK,ORDER,REVIEW\" \"npm run start:api\" \"npm run start:auth\" \"npm run start:user\" \"npm run start:book\" \"npm run start:order\" \"npm run start:review\""
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

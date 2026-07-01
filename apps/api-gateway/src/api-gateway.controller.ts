@@ -86,27 +86,24 @@ export class ApiGatewayController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const refreshTokenCookie = request.cookies['refreshToken'] as string | undefined;
+    const refreshTokenCookie = request.cookies['refreshToken'] as
+      string | undefined;
     if (!refreshTokenCookie) {
       throw new UnauthorizedException('Missing refresh token');
     }
-    
-    // We assume we can decode it here to get the userId, or auth-service handles it
-    // Wait, the authService expects { userId: string; refreshToken: string }
-    // Let's extract the user ID by decoding it. Or better, just let auth-service verify the refresh token.
-    // Let's decode it safely (just payload) because it's a JWT.
+
     try {
       const payload = JSON.parse(
         Buffer.from(refreshTokenCookie.split('.')[1], 'base64').toString(),
       ) as { sub: string };
-      
+
       const result = await lastValueFrom(
         this.apiGatewayService.refreshTokens({
           userId: payload.sub,
           refreshToken: refreshTokenCookie,
-        })
+        }),
       );
-      
+
       response.cookie('accessToken', result.access_token, {
         httpOnly: true,
         sameSite: 'lax',
@@ -218,7 +215,7 @@ export class ApiGatewayController {
     @Body() body: { bookId: number; rating: number; comment?: string },
   ) {
     return this.apiGatewayService.addReview(
-      Number(payload.sub),
+      payload.sub,
       body.bookId,
       body.rating,
       body.comment,

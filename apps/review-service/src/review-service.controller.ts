@@ -11,7 +11,7 @@ export class ReviewServiceController {
     @Payload()
     data: {
       bookId: number;
-      userId: number;
+      userId: string;
       rating: number;
       comment?: string;
     },

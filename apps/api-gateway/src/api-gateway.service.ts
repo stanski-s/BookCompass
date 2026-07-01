@@ -139,7 +139,7 @@ export class ApiGatewayService {
     return this.userClient.send<number[]>('user.getLikes', userId);
   }
 
-  addReview(userId: number, bookId: number, rating: number, comment?: string) {
+  addReview(userId: string, bookId: number, rating: number, comment?: string) {
     return this.reviewClient.send('add_review', {
       userId,
       bookId,
