@@ -26,23 +26,23 @@ export default function NavBar() {
     }
   };
 
-  const checkAuth = async () => {
-    try {
-      const res = await fetch('http://localhost:8080/api/auth/me', {
-        credentials: 'include'
-      });
-      if (res.ok) {
-        setIsAuthenticated(true);
-        fetchCart();
-      } else {
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/auth/me', {
+          credentials: 'include'
+        });
+        if (res.ok) {
+          setIsAuthenticated(true);
+          fetchCart();
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch {
         setIsAuthenticated(false);
       }
-    } catch {
-      setIsAuthenticated(false);
-    }
-  };
+    };
 
-  useEffect(() => {
     checkAuth();
 
     const handleCartUpdate = () => fetchCart();

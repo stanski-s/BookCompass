@@ -40,6 +40,7 @@ export const LikedBooksProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLikedBooks();
     
     // Also add a custom event for same-tab login/logout
