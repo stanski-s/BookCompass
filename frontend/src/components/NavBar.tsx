@@ -12,11 +12,9 @@ export default function NavBar() {
   const { likedBookIds } = useLikedBooks();
 
   const fetchCart = async () => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) return;
     try {
       const res = await fetch('http://localhost:8080/api/cart', {
-        headers: { Authorization: `Bearer ${token}` }
+        credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();
@@ -28,13 +26,24 @@ export default function NavBar() {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsAuthenticated(true);
-      fetchCart();
+  const checkAuth = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/api/auth/me', {
+        credentials: 'include'
+      });
+      if (res.ok) {
+        setIsAuthenticated(true);
+        fetchCart();
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch {
+      setIsAuthenticated(false);
     }
+  };
+
+  useEffect(() => {
+    checkAuth();
 
     const handleCartUpdate = () => fetchCart();
     window.addEventListener('cartUpdated', handleCartUpdate);
@@ -118,7 +127,11 @@ export default function NavBar() {
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
               <Link href="/orders" className={`font-label-md hover:bg-surface-container-high px-sm py-xs rounded transition-colors active:scale-95 ${pathname === '/orders' ? 'text-primary font-bold' : 'text-secondary hover:text-primary'}`}>Orders</Link>
-              <button onClick={() => { localStorage.removeItem('accessToken'); setIsAuthenticated(false); window.location.reload(); }} className="font-label-md text-primary hover:bg-surface-container-high px-sm py-xs rounded transition-colors active:scale-95">
+              <button onClick={async () => { 
+                await fetch('http://localhost:8080/api/auth/logout', { method: 'POST', credentials: 'include' });
+                setIsAuthenticated(false); 
+                window.location.reload(); 
+              }} className="font-label-md text-primary hover:bg-surface-container-high px-sm py-xs rounded transition-colors active:scale-95">
                 Logout
               </button>
             </div>

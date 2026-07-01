@@ -12,8 +12,7 @@ export default function AuthForm({ type }: { type: 'login' | 'register' }) {
     e.preventDefault();
     try {
       if (type === 'login') {
-        const res = await apiClient.login({ email, password });
-        localStorage.setItem('accessToken', res.access_token);
+        await apiClient.login({ email, password });
         window.location.href = '/';
       } else {
         await apiClient.register({ email, password, username });

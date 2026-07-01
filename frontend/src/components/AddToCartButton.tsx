@@ -8,20 +8,14 @@ export default function AddToCartButton({ bookId }: { bookId: number }) {
   const router = useRouter();
 
   const handleAddToCart = async () => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
     setLoading(true);
     try {
       const res = await fetch('http://localhost:8080/api/cart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ bookId, quantity: 1 }),
       });
 

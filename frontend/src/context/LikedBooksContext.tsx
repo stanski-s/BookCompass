@@ -21,50 +21,36 @@ export const LikedBooksProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchLikedBooks = async () => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      setLikedBookIds([]);
-      setIsLoading(false);
-      return;
-    }
     try {
       const res = await fetch('http://localhost:8080/api/liked-books', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
       if (res.ok) {
         const ids = await res.json();
         setLikedBookIds(ids);
+      } else {
+        setLikedBookIds([]);
       }
     } catch (error) {
       console.error('Failed to fetch liked books', error);
+      setLikedBookIds([]);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLikedBooks();
     
-    // Re-fetch when localStorage changes (e.g. login/logout in another tab)
-    const handleStorageChange = () => fetchLikedBooks();
-    window.addEventListener('storage', handleStorageChange);
-    
     // Also add a custom event for same-tab login/logout
-    window.addEventListener('auth-change', handleStorageChange);
+    window.addEventListener('auth-change', fetchLikedBooks);
     
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('auth-change', handleStorageChange);
+      window.removeEventListener('auth-change', fetchLikedBooks);
     };
   }, []);
 
   const toggleLike = async (bookId: number) => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) return;
-
     // Optimistic update
     setLikedBookIds((prev) => 
       prev.includes(bookId) ? prev.filter((id) => id !== bookId) : [...prev, bookId]
@@ -75,8 +61,8 @@ export const LikedBooksProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ bookId }),
       });
       

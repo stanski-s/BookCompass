@@ -25,15 +25,9 @@ export default function CartPage() {
 
   useEffect(() => {
     const fetchCartAndBooks = async () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
-
       try {
         const res = await fetch('http://localhost:8080/api/cart', {
-          headers: { Authorization: `Bearer ${token}` }
+          credentials: 'include'
         });
         
         if (res.ok) {
@@ -65,12 +59,11 @@ export default function CartPage() {
   }, [router]);
 
   const handleCheckout = async () => {
-    const token = localStorage.getItem('accessToken');
     setCheckoutLoading(true);
     try {
       const res = await fetch('http://localhost:8080/api/orders/checkout', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        credentials: 'include'
       });
       if (res.ok) {
         window.dispatchEvent(new Event('cartUpdated'));
@@ -87,11 +80,10 @@ export default function CartPage() {
   };
 
   const handleRemove = async (bookId: number) => {
-    const token = localStorage.getItem('accessToken');
     try {
       const res = await fetch(`http://localhost:8080/api/cart/${bookId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        credentials: 'include'
       });
       if (res.ok) {
         setCartItems(prev => prev.filter(item => item.bookId !== bookId));
@@ -110,14 +102,13 @@ export default function CartPage() {
       return;
     }
     
-    const token = localStorage.getItem('accessToken');
     try {
       const res = await fetch('http://localhost:8080/api/cart', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` 
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ bookId, quantity: change })
       });
       

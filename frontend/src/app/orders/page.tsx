@@ -32,15 +32,9 @@ export default function OrdersPage() {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
-
       try {
         const res = await fetch('http://localhost:8080/api/orders', {
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include',
         });
 
         if (res.ok) {
